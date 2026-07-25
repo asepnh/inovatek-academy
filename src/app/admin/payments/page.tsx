@@ -3,6 +3,8 @@ import { PaymentStatusBadge } from "@/components/payment-status-badge";
 import { formatDate, formatMYR, monthName } from "@/lib/format";
 import type { PaymentStatus } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPaymentsPage({
   searchParams,
 }: {

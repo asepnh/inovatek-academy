@@ -4,6 +4,8 @@ import { QrCodeCard } from "@/components/qr-code-card";
 import { PaymentStatusBadge } from "@/components/payment-status-badge";
 import { formatDateTime, formatMYR, monthName } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminStudentDetailPage({
   params,
 }: {

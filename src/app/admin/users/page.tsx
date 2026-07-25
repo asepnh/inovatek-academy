@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { setUserRole } from "@/actions/users";
 import { formatDate } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminUsersPage() {
   const supabase = createAdminClient();
   const { data: profiles } = await supabase

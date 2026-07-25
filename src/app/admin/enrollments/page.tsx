@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { setEnrollmentStatus } from "@/actions/enrollments";
 import { formatDate } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminEnrollmentsPage() {
   const supabase = createAdminClient();
 

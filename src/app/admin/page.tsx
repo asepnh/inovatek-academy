@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { StatCard } from "@/components/stat-card";
 import { formatMYR } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   const supabase = createAdminClient();
 

@@ -2,6 +2,8 @@ import { createClass } from "@/actions/classes";
 import { createAdminClient } from "@/lib/supabase/server";
 import { CLASS_GRADE_LEVELS } from "@/lib/grades";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewClassPage({
   searchParams,
 }: {

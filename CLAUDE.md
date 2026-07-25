@@ -66,6 +66,20 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
   both were deliberately skipped to keep this simple (maskable was skipped
   specifically because the logo's artwork sits close to the icon edges and
   would risk cropping under Android's adaptive-icon mask).
+- **Billing holidays**: `public.billing_holidays` (migration
+  `0006_billing_holidays.sql`) lets an admin mark a whole month as skipped
+  for invoice generation via `/admin/settings` — `generateMonthlyInvoices()`
+  in `src/lib/invoices.ts` checks this table first and, if the month is
+  marked, skips creating new payment rows but still runs
+  `markOverdueAndNotify()` for already-existing payments. It's global (all
+  classes), not per-class.
+- **Excel exports**: `/admin/reports` offers two `.xlsx` downloads (via
+  `exceljs`, not the `xlsx` npm package — that one has unpatched high-severity
+  CVEs with no fix path) — attendance by class + date range
+  (`/api/export/attendance`) and payments by month
+  (`/api/export/payments`). Both are plain GET route handlers gated by an
+  admin-role check, not server actions, since a form's `method="get"` needs
+  to trigger a real browser download.
 
 ## Current status (as of handoff)
 

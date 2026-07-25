@@ -16,6 +16,18 @@ import { monthName } from "@/lib/format";
 export async function generateMonthlyInvoices(month: number, year: number) {
   const supabase = createAdminClient();
 
+  const { data: holiday } = await supabase
+    .from("billing_holidays")
+    .select("note")
+    .eq("year", year)
+    .eq("month", month)
+    .maybeSingle();
+
+  if (holiday) {
+    const overdueResult = await markOverdueAndNotify();
+    return { invoicesCreated: 0, skipped: true, holidayNote: holiday.note || null, ...overdueResult };
+  }
+
   const { data: enrollments, error: enrollmentsError } = await supabase
     .from("enrollments")
     .select("id, student_id, class_id, classes(monthly_fee_cents, name)")

@@ -17,7 +17,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 text-center">
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-16 text-center sm:py-24">
       <Image
         src="/icons/icon-512.png"
         alt="Inovatek Academy"

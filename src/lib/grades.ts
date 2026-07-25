@@ -13,6 +13,7 @@ export const GRADE_OPTIONS = [
   "Secondary 3",
   "Secondary 4",
   "Secondary 5",
+  "Secondary 6",
   "Other",
 ] as const;
 

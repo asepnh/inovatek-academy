@@ -32,6 +32,7 @@ export default async function MentorAttendancePage({
 
   let roster: RosterStudent[] = [];
   let presentIds = new Set<string>();
+  let paymentByStudent = new Map<string, string>();
 
   if (selectedClassId) {
     const { data: enrollments } = await supabase
@@ -55,6 +56,16 @@ export default async function MentorAttendancePage({
       .gte("scanned_at", startOfDay.toISOString());
 
     presentIds = new Set((todayAttendance ?? []).map((a) => a.student_id));
+
+    const now = new Date();
+    const { data: payments } = await supabase
+      .from("payments")
+      .select("student_id, status")
+      .eq("class_id", selectedClassId)
+      .eq("period_month", now.getMonth() + 1)
+      .eq("period_year", now.getFullYear());
+
+    paymentByStudent = new Map((payments ?? []).map((p) => [p.student_id, p.status]));
   }
 
   return (
@@ -111,7 +122,9 @@ export default async function MentorAttendancePage({
                   <div key={s.id} className="flex items-center justify-between py-3">
                     <div>
                       <p className="font-medium text-slate-900">{s.full_name}</p>
-                      <p className="text-xs text-slate-500">{s.grade}</p>
+                      <p className="text-xs text-slate-500">
+                        {s.grade} · Payment: {paymentByStudent.get(s.id) ?? "not billed yet"}
+                      </p>
                     </div>
                     <AttendanceToggle
                       studentId={s.id}

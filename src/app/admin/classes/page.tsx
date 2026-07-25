@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/server";
 import { formatMYR } from "@/lib/format";
+import { DeleteClassButton } from "@/components/delete-class-button";
 
-export default async function AdminClassesPage() {
+export default async function AdminClassesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; deleted?: string; created?: string; updated?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = createAdminClient();
 
   const { data: courses, error } = await supabase
@@ -17,10 +23,14 @@ export default async function AdminClassesPage() {
         <Link href="/admin/classes/new" className="btn">+ New class</Link>
       </div>
 
+      {params.error && (
+        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{params.error}</div>
+      )}
+      {params.deleted && (
+        <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">Class deleted.</div>
+      )}
       {error && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-          Debug: {error.message}
-        </div>
+        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error.message}</div>
       )}
 
       <div className="card overflow-x-auto">
@@ -53,7 +63,10 @@ export default async function AdminClassesPage() {
                     </span>
                   </td>
                   <td className="py-2 text-right">
-                    <Link href={`/admin/classes/${c.id}/edit`} className="text-brand-600 hover:underline">Edit</Link>
+                    <div className="flex items-center justify-end gap-3">
+                      <Link href={`/admin/classes/${c.id}/edit`} className="text-brand-600 hover:underline">Edit</Link>
+                      <DeleteClassButton classId={c.id} className="text-red-600 hover:underline" />
+                    </div>
                   </td>
                 </tr>
               );

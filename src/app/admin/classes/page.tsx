@@ -5,7 +5,7 @@ import { formatMYR } from "@/lib/format";
 export default async function AdminClassesPage() {
   const supabase = createAdminClient();
 
-  const { data: courses } = await supabase
+  const { data: courses, error } = await supabase
     .from("classes")
     .select("id, name, grade_level, monthly_fee_cents, is_active, profiles(full_name), enrollments(count)")
     .order("created_at", { ascending: false });
@@ -16,6 +16,12 @@ export default async function AdminClassesPage() {
         <h1 className="text-2xl font-bold text-slate-900">Classes</h1>
         <Link href="/admin/classes/new" className="btn">+ New class</Link>
       </div>
+
+      {error && (
+        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          Debug: {error.message}
+        </div>
+      )}
 
       <div className="card overflow-x-auto">
         <table className="w-full text-left text-sm">

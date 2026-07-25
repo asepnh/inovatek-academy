@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { formatMYR } from "@/lib/format";
 import { DeleteClassButton } from "@/components/delete-class-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminClassesPage({
   searchParams,
 }: {

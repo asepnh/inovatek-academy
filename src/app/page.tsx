@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -17,9 +18,14 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-        Inovatek Academy
-      </h1>
+      <Image
+        src="/icons/icon-512.png"
+        alt="Inovatek Academy"
+        width={512}
+        height={512}
+        priority
+        className="h-28 w-28 rounded-2xl shadow-sm sm:h-36 sm:w-36"
+      />
       <p className="mt-4 max-w-xl text-lg text-slate-600">
         Enroll your child, register for courses, pay monthly fees online, and
         track attendance and payment status — all in one place.

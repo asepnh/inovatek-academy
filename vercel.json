@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/generate-invoices?secret=REPLACE_WITH_YOUR_CRON_SECRET",
+      "path": "/api/cron/generate-invoices?secret=Rbb882e5a6e4ee672c5b60926d7105cbd2a316cbafccb3ae24462ad2b9234514bET",
       "schedule": "0 1 1 * *"
     }
   ]

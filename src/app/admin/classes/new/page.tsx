@@ -11,13 +11,19 @@ export default async function NewClassPage({
 }) {
   const params = await searchParams;
   const supabase = createAdminClient();
-  const { data: mentors } = await supabase.from("profiles").select("id, full_name").eq("role", "mentor");
+  const { data: mentors, error: mentorsError } = await supabase
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("role", "mentor");
 
   return (
     <div className="mx-auto max-w-lg">
       <h1 className="text-2xl font-bold text-slate-900">New class</h1>
 
       {params.error && <div className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{params.error}</div>}
+      <div className="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-800">
+        Debug: mentorsError={mentorsError ? mentorsError.message : "none"}, mentors count={mentors?.length ?? "null"}
+      </div>
 
       <form action={createClass} className="card mt-6 space-y-4">
         <div>

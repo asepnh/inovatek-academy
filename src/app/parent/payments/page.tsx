@@ -55,7 +55,7 @@ export default async function ParentPaymentsPage({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {payments?.map((p) => {
+            {payments?.map((p: NonNullable<typeof payments>[number]) => {
               const student = Array.isArray(p.students) ? p.students[0] : p.students;
               const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
               return (

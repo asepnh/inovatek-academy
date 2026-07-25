@@ -31,7 +31,7 @@ export default async function AdminCoursesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {courses?.map((c) => {
+            {courses?.map((c: NonNullable<typeof courses>[number]) => {
               const mentor = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
               const count = Array.isArray(c.enrollments) ? c.enrollments[0]?.count ?? 0 : 0;
               return (

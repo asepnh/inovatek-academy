@@ -44,7 +44,7 @@ export default async function ParentCoursesPage({
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {courses?.map((c) => (
+        {courses?.map((c: NonNullable<typeof courses>[number]) => (
           <div key={c.id} className="card">
             <div className="flex items-start justify-between">
               <div>

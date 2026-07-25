@@ -27,7 +27,7 @@ export default async function AdminStudentsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {students?.map((s) => {
+            {students?.map((s: NonNullable<typeof students>[number]) => {
               const parent = Array.isArray(s.profiles) ? s.profiles[0] : s.profiles;
               return (
                 <tr key={s.id}>

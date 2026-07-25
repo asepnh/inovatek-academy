@@ -48,11 +48,11 @@ export default async function MentorStudentsPage() {
               <th className="pb-2 font-medium">Grade</th>
               <th className="pb-2 font-medium">Course</th>
               <th className="pb-2 font-medium">Enrollment</th>
-              <th className="pb-2 font-medium">This month's payment</th>
+              <th className="pb-2 font-medium">This month&apos;s payment</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {enrollments?.map((e) => {
+            {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
               const student = Array.isArray(e.students) ? e.students[0] : e.students;
               const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
               const status = paymentByStudentCourse.get(`${student?.id}:${course?.id}`);

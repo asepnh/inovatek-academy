@@ -53,7 +53,7 @@ export default async function ParentDashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {students?.map((s) => (
+        {students?.map((s: NonNullable<typeof students>[number]) => (
           <Link key={s.id} href={`/parent/students/${s.id}`} className="card block hover:shadow-md">
             <p className="text-lg font-semibold text-slate-900">{s.full_name}</p>
             <p className="text-sm text-slate-500">{s.grade}</p>

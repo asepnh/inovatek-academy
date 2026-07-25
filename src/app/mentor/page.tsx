@@ -19,7 +19,7 @@ export default async function MentorDashboard() {
       <h1 className="text-2xl font-bold text-slate-900">My Courses</h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {courses?.map((c) => {
+        {courses?.map((c: NonNullable<typeof courses>[number]) => {
           const count = Array.isArray(c.enrollments) ? c.enrollments[0]?.count ?? 0 : 0;
           return (
             <div key={c.id} className="card">

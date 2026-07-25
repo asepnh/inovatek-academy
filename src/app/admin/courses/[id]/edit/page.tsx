@@ -65,7 +65,7 @@ export default async function EditCoursePage({
           <label className="label" htmlFor="mentor_id">Mentor</label>
           <select className="input" id="mentor_id" name="mentor_id" defaultValue={course.mentor_id ?? ""}>
             <option value="">Unassigned</option>
-            {mentors?.map((m) => (
+            {mentors?.map((m: { id: string; full_name: string }) => (
               <option key={m.id} value={m.id}>{m.full_name}</option>
             ))}
           </select>

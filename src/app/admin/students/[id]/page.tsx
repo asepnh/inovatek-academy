@@ -51,7 +51,7 @@ export default async function AdminStudentDetailPage({
         <div className="card lg:col-span-2">
           <h2 className="font-semibold text-slate-900">Payment history</h2>
           <ul className="mt-3 divide-y divide-slate-100">
-            {payments?.map((p) => {
+            {payments?.map((p: NonNullable<typeof payments>[number]) => {
               const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
               return (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">
@@ -71,7 +71,7 @@ export default async function AdminStudentDetailPage({
       <div className="card">
         <h2 className="font-semibold text-slate-900">Attendance log</h2>
         <ul className="mt-3 divide-y divide-slate-100">
-          {attendance?.map((a) => {
+          {attendance?.map((a: NonNullable<typeof attendance>[number]) => {
             const course = Array.isArray(a.courses) ? a.courses[0] : a.courses;
             return (
               <li key={a.id} className="flex items-center justify-between py-2 text-sm">

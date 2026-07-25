@@ -62,7 +62,7 @@ export default async function StudentDetailPage({
             <p className="mt-3 text-sm text-slate-500">Not enrolled in any courses yet.</p>
           )}
           <ul className="mt-3 divide-y divide-slate-100">
-            {enrollments?.map((e) => {
+            {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
               const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
               return (
                 <li key={e.id} className="flex items-center justify-between py-2 text-sm">
@@ -85,7 +85,7 @@ export default async function StudentDetailPage({
             <p className="mt-3 text-sm text-slate-500">No attendance recorded yet.</p>
           )}
           <ul className="mt-3 divide-y divide-slate-100">
-            {attendance?.map((a) => {
+            {attendance?.map((a: NonNullable<typeof attendance>[number]) => {
               const course = Array.isArray(a.courses) ? a.courses[0] : a.courses;
               return (
                 <li key={a.id} className="flex items-center justify-between py-2 text-sm">
@@ -103,7 +103,7 @@ export default async function StudentDetailPage({
             <p className="mt-3 text-sm text-slate-500">No payments yet.</p>
           )}
           <ul className="mt-3 divide-y divide-slate-100">
-            {payments?.map((p) => {
+            {payments?.map((p: NonNullable<typeof payments>[number]) => {
               const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
               return (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">

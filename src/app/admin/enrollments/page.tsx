@@ -26,7 +26,7 @@ export default async function AdminEnrollmentsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {enrollments?.map((e) => {
+            {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
               const student = Array.isArray(e.students) ? e.students[0] : e.students;
               const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
               return (

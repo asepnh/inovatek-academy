@@ -14,7 +14,7 @@ export default async function AdminUsersPage() {
       <h1 className="text-2xl font-bold text-slate-900">Users</h1>
       <p className="text-sm text-slate-600">
         Everyone who signs up starts as a Parent. Promote an account to Mentor
-        or Admin here once they've created their account.
+        or Admin here once they&apos;ve created their account.
       </p>
 
       <div className="card overflow-x-auto">
@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {profiles?.map((p) => (
+            {profiles?.map((p: NonNullable<typeof profiles>[number]) => (
               <tr key={p.id}>
                 <td className="py-2">{p.full_name || <span className="text-slate-400">—</span>}</td>
                 <td className="py-2">{p.email}</td>

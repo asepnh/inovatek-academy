@@ -79,19 +79,16 @@ export async function updateClass(classId: string, formData: FormData) {
   redirect("/admin/classes?updated=1");
 }
 
-export async function deleteClass(formData: FormData) {
+export async function deleteClass(classId: string) {
   const supabase = await requireAdmin();
-  const classId = String(formData.get("id") ?? "");
-  if (!classId) redirect("/admin/classes");
+  if (!classId) return { error: "Missing class id." };
 
   // FK constraints on enrollments/payments/attendance cascade-delete along
   // with the class (on delete cascade, see supabase/migrations/0001_init.sql).
   const { error } = await supabase.from("classes").delete().eq("id", classId);
 
-  if (error) {
-    redirect("/admin/classes?error=" + encodeURIComponent(error.message));
-  }
+  if (error) return { error: error.message };
 
   revalidatePath("/admin/classes");
-  redirect("/admin/classes?deleted=1");
+  return {};
 }

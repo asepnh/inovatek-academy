@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminClassesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; deleted?: string; created?: string; updated?: string }>;
+  searchParams: Promise<{ error?: string; created?: string; updated?: string }>;
 }) {
   const params = await searchParams;
   const supabase = createAdminClient();
@@ -27,9 +27,6 @@ export default async function AdminClassesPage({
 
       {params.error && (
         <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{params.error}</div>
-      )}
-      {params.deleted && (
-        <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">Class deleted.</div>
       )}
       {error && (
         <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error.message}</div>

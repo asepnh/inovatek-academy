@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { AttendanceToggle } from "@/components/attendance-toggle";
 import { QrScanner } from "@/components/qr-scanner";
+
+export const dynamic = "force-dynamic";
 
 interface RosterStudent {
   id: string;
@@ -77,22 +78,22 @@ export default async function MentorAttendancePage({
           </form>
 
           <div className="inline-flex overflow-hidden rounded-lg border border-slate-300">
-            <Link
+            <a
               href={`/mentor/attendance?class=${selectedClassId}&mode=roster`}
               className={`px-3 py-1.5 text-sm font-medium transition ${
                 mode === "roster" ? "bg-blue-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"
               }`}
             >
               Roster
-            </Link>
-            <Link
+            </a>
+            <a
               href={`/mentor/attendance?class=${selectedClassId}&mode=scan`}
               className={`border-l border-slate-300 px-3 py-1.5 text-sm font-medium transition ${
                 mode === "scan" ? "bg-blue-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"
               }`}
             >
               Scan QR
-            </Link>
+            </a>
           </div>
 
           {mode === "scan" && selectedClassId && (

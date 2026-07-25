@@ -59,6 +59,10 @@ export default async function HomePage() {
           </p>
         </div>
       </div>
+
+      <footer className="mt-16 text-xs text-slate-400">
+        © 2026 Inovatek Solutions Sdn. Bhd.
+      </footer>
     </main>
   );
 }

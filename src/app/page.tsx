@@ -49,7 +49,7 @@ export default async function HomePage() {
         <div className="card text-left">
           <h2 className="font-semibold text-slate-900">Pay online (FPX)</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Secure monthly payments via Billplz, with reminders if you fall behind.
+            Secure monthly payments via FPX, with reminders if you fall behind.
           </p>
         </div>
         <div className="card text-left">

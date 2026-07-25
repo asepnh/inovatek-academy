@@ -48,14 +48,25 @@ export async function payNow(paymentId: string) {
     .eq("id", user!.id)
     .single();
 
-  const bill = await createBill({
-    amountCents: payment!.amount_cents,
-    name: parentProfile?.full_name || student.full_name,
-    email: parentProfile?.email || user!.email!,
-    mobile: parentProfile?.phone ?? undefined,
-    description: `${student.full_name} - ${course?.name ?? "Class"} - ${monthName(payment!.period_month)} ${payment!.period_year}`,
-    referenceId: payment!.id,
-  });
+  let bill;
+  try {
+    bill = await createBill({
+      amountCents: payment!.amount_cents,
+      name: parentProfile?.full_name || student.full_name,
+      email: parentProfile?.email || user!.email!,
+      mobile: parentProfile?.phone ?? undefined,
+      description: `${student.full_name} - ${course?.name ?? "Class"} - ${monthName(payment!.period_month)} ${payment!.period_year}`,
+      referenceId: payment!.id,
+    });
+  } catch (err) {
+    console.error("createBill failed", err);
+    redirect(
+      "/parent/payments?error=" +
+        encodeURIComponent(
+          "Could not start payment: " + (err instanceof Error ? err.message : "unknown error")
+        )
+    );
+  }
 
   await supabase
     .from("payments")

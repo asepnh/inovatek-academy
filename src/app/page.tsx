@@ -21,8 +21,8 @@ export default async function HomePage() {
       <Image
         src="/icons/icon-512.png"
         alt="Inovatek Academy"
-        width={512}
-        height={512}
+        width={144}
+        height={144}
         priority
         className="h-28 w-28 rounded-2xl shadow-sm sm:h-36 sm:w-36"
       />

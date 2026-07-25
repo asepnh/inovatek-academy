@@ -19,14 +19,14 @@ export async function payNow(paymentId: string) {
 
   const { data: payment, error } = await supabase
     .from("payments")
-    .select("id, amount_cents, status, billplz_url, period_month, period_year, students(full_name, parent_id), courses(name)")
+    .select("id, amount_cents, status, billplz_url, period_month, period_year, students(full_name, parent_id), classes(name)")
     .eq("id", paymentId)
     .single();
 
   if (error || !payment) redirect("/parent/payments?error=" + encodeURIComponent("Payment not found."));
 
   const student = Array.isArray(payment!.students) ? payment!.students[0] : payment!.students;
-  const course = Array.isArray(payment!.courses) ? payment!.courses[0] : payment!.courses;
+  const course = Array.isArray(payment!.classes) ? payment!.classes[0] : payment!.classes;
 
   if (!student || student.parent_id !== user!.id) {
     redirect("/parent/payments?error=" + encodeURIComponent("Not authorized."));

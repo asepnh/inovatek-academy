@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { enrollStudent } from "@/actions/enrollments";
 import { formatMYR } from "@/lib/format";
 
-export default async function ParentCoursesPage({
+export default async function ParentClassesPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; enrolled?: string }>;
@@ -14,7 +14,7 @@ export default async function ParentCoursesPage({
   } = await supabase.auth.getUser();
 
   const { data: courses } = await supabase
-    .from("courses")
+    .from("classes")
     .select("id, name, description, grade_level, monthly_fee_cents, schedule")
     .eq("is_active", true)
     .order("name");
@@ -39,7 +39,7 @@ export default async function ParentCoursesPage({
 
       {(!students || students.length === 0) && (
         <div className="card text-sm text-slate-600">
-          Add a student first before registering for a course.
+          Add a student first before registering for a class.
         </div>
       )}
 
@@ -58,7 +58,7 @@ export default async function ParentCoursesPage({
 
             {students && students.length > 0 && (
               <form action={enrollStudent} className="mt-4 flex gap-2">
-                <input type="hidden" name="course_id" value={c.id} />
+                <input type="hidden" name="class_id" value={c.id} />
                 <select name="student_id" className="input" required defaultValue="">
                   <option value="" disabled>Select student</option>
                   {students.map((s) => (

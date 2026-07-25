@@ -18,7 +18,7 @@ export async function generateMonthlyInvoices(month: number, year: number) {
 
   const { data: enrollments, error: enrollmentsError } = await supabase
     .from("enrollments")
-    .select("id, student_id, course_id, courses(monthly_fee_cents, name)")
+    .select("id, student_id, class_id, classes(monthly_fee_cents, name)")
     .eq("status", "active");
 
   if (enrollmentsError) throw enrollmentsError;
@@ -28,7 +28,7 @@ export async function generateMonthlyInvoices(month: number, year: number) {
 
   let created = 0;
   for (const e of enrollments ?? []) {
-    const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
+    const course = Array.isArray(e.classes) ? e.classes[0] : e.classes;
     if (!course) continue;
 
     const { error: insertError, data } = await supabase
@@ -37,7 +37,7 @@ export async function generateMonthlyInvoices(month: number, year: number) {
         {
           enrollment_id: e.id,
           student_id: e.student_id,
-          course_id: e.course_id,
+          class_id: e.class_id,
           period_month: month,
           period_year: year,
           amount_cents: course.monthly_fee_cents,
@@ -63,7 +63,7 @@ export async function markOverdueAndNotify() {
 
   const { data: overdue, error } = await supabase
     .from("payments")
-    .select("id, student_id, amount_cents, period_month, period_year, students(full_name, parent_id), courses(name)")
+    .select("id, student_id, amount_cents, period_month, period_year, students(full_name, parent_id), classes(name)")
     .eq("status", "pending")
     .lt("due_date", today);
 
@@ -72,7 +72,7 @@ export async function markOverdueAndNotify() {
   let flagged = 0;
   for (const p of overdue ?? []) {
     const student = Array.isArray(p.students) ? p.students[0] : p.students;
-    const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
+    const course = Array.isArray(p.classes) ? p.classes[0] : p.classes;
     if (!student) continue;
 
     await supabase.from("payments").update({ status: "overdue" }).eq("id", p.id);

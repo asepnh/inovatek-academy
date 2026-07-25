@@ -4,11 +4,11 @@ import { useState, useTransition } from "react";
 
 export function AttendanceToggle({
   studentId,
-  courseId,
+  classId,
   initialPresent,
 }: {
   studentId: string;
-  courseId: string;
+  classId: string;
   initialPresent: boolean;
 }) {
   const [present, setPresent] = useState(initialPresent);
@@ -26,7 +26,7 @@ export function AttendanceToggle({
         const res = await fetch("/api/attendance/mark", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ student_id: studentId, course_id: courseId, present: next }),
+          body: JSON.stringify({ student_id: studentId, class_id: classId, present: next }),
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));

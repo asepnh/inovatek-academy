@@ -22,7 +22,7 @@ export default async function NewStudentPage({
     <div className="mx-auto max-w-lg">
       <h1 className="text-2xl font-bold text-slate-900">Enroll a student</h1>
       <p className="mt-1 text-sm text-slate-600">
-        Add your child&apos;s details. You can register them for courses next.
+        Add your child&apos;s details. You can register them for classes next.
       </p>
 
       {params.error && (

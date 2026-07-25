@@ -23,19 +23,19 @@ export default async function StudentDetailPage({
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("id, status, enrolled_at, courses(id, name, monthly_fee_cents)")
+    .select("id, status, enrolled_at, classes(id, name, monthly_fee_cents)")
     .eq("student_id", id);
 
   const { data: attendance } = await supabase
     .from("attendance")
-    .select("id, scanned_at, status, courses(name)")
+    .select("id, scanned_at, status, classes(name)")
     .eq("student_id", id)
     .order("scanned_at", { ascending: false })
     .limit(20);
 
   const { data: payments } = await supabase
     .from("payments")
-    .select("id, status, amount_cents, period_month, period_year, due_date, courses(name)")
+    .select("id, status, amount_cents, period_month, period_year, due_date, classes(name)")
     .eq("student_id", id)
     .order("period_year", { ascending: false })
     .order("period_month", { ascending: false })
@@ -54,8 +54,8 @@ export default async function StudentDetailPage({
         <div className="card lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-slate-900">Enrolled classes</h2>
-            <Link href="/parent/courses" className="text-sm font-medium text-brand-600 hover:underline">
-              Browse courses
+            <Link href="/parent/classes" className="text-sm font-medium text-brand-600 hover:underline">
+              Browse classes
             </Link>
           </div>
           {(!enrollments || enrollments.length === 0) && (
@@ -63,7 +63,7 @@ export default async function StudentDetailPage({
           )}
           <ul className="mt-3 divide-y divide-slate-100">
             {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
-              const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
+              const course = Array.isArray(e.classes) ? e.classes[0] : e.classes;
               return (
                 <li key={e.id} className="flex items-center justify-between py-2 text-sm">
                   <span>{course?.name}</span>
@@ -86,7 +86,7 @@ export default async function StudentDetailPage({
           )}
           <ul className="mt-3 divide-y divide-slate-100">
             {attendance?.map((a: NonNullable<typeof attendance>[number]) => {
-              const course = Array.isArray(a.courses) ? a.courses[0] : a.courses;
+              const course = Array.isArray(a.classes) ? a.classes[0] : a.classes;
               return (
                 <li key={a.id} className="flex items-center justify-between py-2 text-sm">
                   <span>{course?.name}</span>
@@ -104,7 +104,7 @@ export default async function StudentDetailPage({
           )}
           <ul className="mt-3 divide-y divide-slate-100">
             {payments?.map((p: NonNullable<typeof payments>[number]) => {
-              const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
+              const course = Array.isArray(p.classes) ? p.classes[0] : p.classes;
               return (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">
                   <span>

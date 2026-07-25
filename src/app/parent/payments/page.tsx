@@ -20,7 +20,7 @@ export default async function ParentPaymentsPage({
   const { data: payments } = studentIds.length
     ? await supabase
         .from("payments")
-        .select("id, status, amount_cents, period_month, period_year, due_date, students(full_name), courses(name)")
+        .select("id, status, amount_cents, period_month, period_year, due_date, students(full_name), classes(name)")
         .in("student_id", studentIds)
         .order("period_year", { ascending: false })
         .order("period_month", { ascending: false })
@@ -57,7 +57,7 @@ export default async function ParentPaymentsPage({
           <tbody className="divide-y divide-slate-100">
             {payments?.map((p: NonNullable<typeof payments>[number]) => {
               const student = Array.isArray(p.students) ? p.students[0] : p.students;
-              const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
+              const course = Array.isArray(p.classes) ? p.classes[0] : p.classes;
               return (
                 <tr key={p.id}>
                   <td className="py-2">{student?.full_name}</td>

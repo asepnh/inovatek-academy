@@ -8,7 +8,7 @@ type ScanResult = {
   studentName?: string;
 };
 
-export function QrScanner({ courseId }: { courseId: string }) {
+export function QrScanner({ classId }: { classId: string }) {
   const containerId = "qr-reader";
   const scannerRef = useRef<import("html5-qrcode").Html5Qrcode | null>(null);
   const [lastResult, setLastResult] = useState<ScanResult | null>(null);
@@ -60,7 +60,7 @@ export function QrScanner({ courseId }: { courseId: string }) {
         .catch(() => {});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId]);
+  }, [classId]);
 
   async function handleScan(qrToken: string) {
     setBusy(true);
@@ -68,7 +68,7 @@ export function QrScanner({ courseId }: { courseId: string }) {
       const res = await fetch("/api/attendance/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ qr_token: qrToken, course_id: courseId }),
+        body: JSON.stringify({ qr_token: qrToken, class_id: classId }),
       });
       const data = await res.json();
       setLastResult({ ok: res.ok, message: data.message, studentName: data.studentName });

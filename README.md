@@ -1,6 +1,6 @@
 # Inovatek Academy
 
-A web app for parents/students to enroll, register for courses, pay monthly
+A web app for parents/students to enroll, register for classes, pay monthly
 fees via Billplz FPX, and for mentors to track attendance by scanning each
 student's QR code.
 
@@ -73,7 +73,7 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 ```
 
 Sign out and back in — you'll now land on the Admin dashboard. From
-**Admin → Courses** create your first course; from **Admin → Users** you can
+**Admin → Classes** create your first class; from **Admin → Users** you can
 promote any signed-up account to Mentor (mentors can't self-register as
 mentors — an admin has to grant that role, so nobody can escalate their own
 access).
@@ -82,7 +82,7 @@ access).
 
 - **Enrollment**: a parent adds a student (name, grade, and the parent's own
   name/email/phone) under **My Students → Enroll a student**.
-- **Course registration**: parents browse active courses and register a
+- **Class registration**: parents browse active classes and register a
   student; new enrollments start as `pending` until an admin approves them
   under **Admin → Enrollments** (flip to `active`).
 - **Monthly payments**: call `/api/cron/generate-invoices?secret=YOUR_CRON_SECRET`
@@ -101,10 +101,10 @@ access).
   before going live.**
 - **QR codes**: every student gets a unique QR code (their `qr_token`),
   viewable/downloadable from their student page.
-- **Attendance**: a mentor opens **Scan Attendance**, picks a course, and
+- **Attendance**: a mentor opens **Scan Attendance**, picks a class, and
   scans students' QR codes with their device camera. Each scan calls
   `/api/attendance/scan`, which only succeeds if that student is actively
-  enrolled in the selected course (enforced both by the app logic and by
+  enrolled in the selected class (enforced both by the app logic and by
   Row Level Security).
 - **In-app reminders**: overdue payments show as a red banner on the
   parent's dashboard (from the `notifications` table) — no email/SMS
@@ -153,5 +153,5 @@ Pick one:
   on re-fetching the bill from Billplz's API, which is secure regardless.
   Still worth testing the full sandbox payment flow before going live.
 - Attendance is a simple "present today" check-in (one row per
-  student/course/day). Extend `src/app/api/attendance/scan/route.ts` if you
+  student/class/day). Extend `src/app/api/attendance/scan/route.ts` if you
   need per-session (rather than per-day) tracking.

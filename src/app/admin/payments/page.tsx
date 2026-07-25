@@ -13,7 +13,7 @@ export default async function AdminPaymentsPage({
 
   let query = supabase
     .from("payments")
-    .select("id, status, amount_cents, period_month, period_year, due_date, students(full_name), courses(name)")
+    .select("id, status, amount_cents, period_month, period_year, due_date, students(full_name), classes(name)")
     .order("due_date", { ascending: false });
 
   if (params.status) query = query.eq("status", params.status as PaymentStatus);
@@ -52,7 +52,7 @@ export default async function AdminPaymentsPage({
           <tbody className="divide-y divide-slate-100">
             {payments?.map((p: NonNullable<typeof payments>[number]) => {
               const student = Array.isArray(p.students) ? p.students[0] : p.students;
-              const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
+              const course = Array.isArray(p.classes) ? p.classes[0] : p.classes;
               return (
                 <tr key={p.id}>
                   <td className="py-2">{student?.full_name}</td>

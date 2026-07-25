@@ -2,11 +2,11 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/server";
 import { formatMYR } from "@/lib/format";
 
-export default async function AdminCoursesPage() {
+export default async function AdminClassesPage() {
   const supabase = createAdminClient();
 
   const { data: courses } = await supabase
-    .from("courses")
+    .from("classes")
     .select("id, name, grade_level, monthly_fee_cents, is_active, profiles(full_name), enrollments(count)")
     .order("created_at", { ascending: false });
 
@@ -14,7 +14,7 @@ export default async function AdminCoursesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Classes</h1>
-        <Link href="/admin/courses/new" className="btn">+ New class</Link>
+        <Link href="/admin/classes/new" className="btn">+ New class</Link>
       </div>
 
       <div className="card overflow-x-auto">
@@ -47,7 +47,7 @@ export default async function AdminCoursesPage() {
                     </span>
                   </td>
                   <td className="py-2 text-right">
-                    <Link href={`/admin/courses/${c.id}/edit`} className="text-brand-600 hover:underline">Edit</Link>
+                    <Link href={`/admin/classes/${c.id}/edit`} className="text-brand-600 hover:underline">Edit</Link>
                   </td>
                 </tr>
               );

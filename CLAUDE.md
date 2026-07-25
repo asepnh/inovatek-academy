@@ -34,20 +34,29 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
 - **Attendance is roster-based, not QR-scan-based**: originally built with a
   camera QR scanner (`src/components/qr-scanner.tsx`, still in the repo but
   unused), then replaced per request with a simpler UI: mentors see their
-  course roster and tap Present/Absent per student
+  class roster and tap Present/Absent per student
   (`src/app/mentor/attendance/page.tsx`,
   `src/components/attendance-toggle.tsx`,
   `src/app/api/attendance/mark/route.ts`). "Present" = an `attendance` row
-  exists for that student/course/today; "Absent" (the default) = no row —
+  exists for that student/class/today; "Absent" (the default) = no row —
   toggling Absent *deletes* today's row rather than storing an explicit
   status. This requires the mentor-delete RLS policy added in
   `supabase/migrations/0002_attendance_mentor_delete.sql` — **confirm this
   migration has actually been run in the Supabase SQL editor**; it's easy to
   forget since it's separate from the initial migration.
-- **Course grade levels vs student grades**: two separate lists in
+- **"Course" renamed to "Class" throughout (UI, routes, and schema)**: the
+  `courses` table was renamed to `classes` (and `course_id` columns to
+  `class_id`) in `supabase/migrations/0003_rename_courses_to_classes.sql` —
+  **run this migration in the Supabase SQL editor** if it hasn't been yet,
+  or every class-related query will fail. Routes moved from
+  `/admin/courses` and `/parent/courses` to `/admin/classes` and
+  `/parent/classes`; `src/actions/courses.ts` became
+  `src/actions/classes.ts` (`createCourse`/`updateCourse` →
+  `createClass`/`updateClass`).
+- **Class grade levels vs student grades**: two separate lists in
   `src/lib/grades.ts`. `GRADE_OPTIONS` (detailed: Primary 1–6, Secondary
-  1–5, etc.) is for a student's own grade. `COURSE_GRADE_LEVELS` (just
-  Primary/Secondary) is for which broad band a course targets — kept
+  1–5, etc.) is for a student's own grade. `CLASS_GRADE_LEVELS` (just
+  Primary/Secondary) is for which broad band a class targets — kept
   separate on request, don't merge them back together.
 - **Installable-shortcut PWA, not a native app**: `src/app/manifest.ts` +
   `src/app/icon.png` + `src/app/apple-icon.png` + `public/icons/*` give
@@ -63,7 +72,8 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
 - Local dev works (`npm install && npm run dev`), `.env.local` is filled in
   with real Supabase + Billplz **sandbox** credentials.
 - Supabase: project created, migration `0001_init.sql` run. Double-check
-  `0002_attendance_mentor_delete.sql` has also been run (see above).
+  `0002_attendance_mentor_delete.sql` and `0003_rename_courses_to_classes.sql`
+  have also been run (see above).
 - GitHub: pushed to `github.com/asepnh/inovatek-academy`, `main` branch.
 - Domain: `inovatek.my` (root/apex — needs an A record, not a CNAME, when
   pointing it at Vercel).

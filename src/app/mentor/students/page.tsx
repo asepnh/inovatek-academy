@@ -8,36 +8,36 @@ export default async function MentorStudentsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: courses } = await supabase.from("courses").select("id, name").eq("mentor_id", user!.id);
-  const courseIds = (courses ?? []).map((c) => c.id);
+  const { data: courses } = await supabase.from("classes").select("id, name").eq("mentor_id", user!.id);
+  const classIds = (courses ?? []).map((c) => c.id);
 
-  const { data: enrollments } = courseIds.length
+  const { data: enrollments } = classIds.length
     ? await supabase
         .from("enrollments")
-        .select("id, status, students(id, full_name, grade), courses(id, name)")
-        .in("course_id", courseIds)
+        .select("id, status, students(id, full_name, grade), classes(id, name)")
+        .in("class_id", classIds)
         .order("enrolled_at", { ascending: false })
     : { data: [] };
 
   const now = new Date();
-  const { data: payments } = courseIds.length
+  const { data: payments } = classIds.length
     ? await supabase
         .from("payments")
-        .select("student_id, course_id, status")
-        .in("course_id", courseIds)
+        .select("student_id, class_id, status")
+        .in("class_id", classIds)
         .eq("period_month", now.getMonth() + 1)
         .eq("period_year", now.getFullYear())
     : { data: [] };
 
   const paymentByStudentCourse = new Map(
-    (payments ?? []).map((p) => [`${p.student_id}:${p.course_id}`, p.status])
+    (payments ?? []).map((p) => [`${p.student_id}:${p.class_id}`, p.status])
   );
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-900">Students &amp; Payment Status</h1>
       <p className="text-sm text-slate-500">
-        Showing {monthName(now.getMonth() + 1)} {now.getFullYear()} payment status for students in your courses.
+        Showing {monthName(now.getMonth() + 1)} {now.getFullYear()} payment status for students in your classes.
       </p>
 
       <div className="card overflow-x-auto">
@@ -54,7 +54,7 @@ export default async function MentorStudentsPage() {
           <tbody className="divide-y divide-slate-100">
             {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
               const student = Array.isArray(e.students) ? e.students[0] : e.students;
-              const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
+              const course = Array.isArray(e.classes) ? e.classes[0] : e.classes;
               const status = paymentByStudentCourse.get(`${student?.id}:${course?.id}`);
               return (
                 <tr key={e.id}>

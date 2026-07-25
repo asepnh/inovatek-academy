@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Inovatek Academy",
     short_name: "Inovatek",
-    description: "Enrollment, course registration, payments, and attendance for Inovatek Academy.",
+    description: "Enrollment, class registration, payments, and attendance for Inovatek Academy.",
     start_url: "/",
     display: "standalone",
     background_color: "#011C43",

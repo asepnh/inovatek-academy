@@ -87,7 +87,7 @@ reaches your domain and marks the payment as paid.
 - [ ] Domain resolves to the app over HTTPS (padlock shows in browser)
 - [ ] Sign up as a parent, confirm the email link points to your domain
 - [ ] Promote yourself to admin (see main README, Step 5)
-- [ ] Create a real course, enroll a test student, approve the enrollment
+- [ ] Create a real class, enroll a test student, approve the enrollment
 - [ ] Trigger `/api/cron/generate-invoices?secret=YOUR_CRON_SECRET` once
       manually (visit the URL directly) to confirm invoices generate
 - [ ] Do one real sandbox payment through to "paid"

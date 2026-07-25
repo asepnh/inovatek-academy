@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { updateCourse } from "@/actions/courses";
+import { updateClass } from "@/actions/classes";
 import { createAdminClient } from "@/lib/supabase/server";
-import { COURSE_GRADE_LEVELS } from "@/lib/grades";
+import { CLASS_GRADE_LEVELS } from "@/lib/grades";
 
-export default async function EditCoursePage({
+export default async function EditClassPage({
   params,
   searchParams,
 }: {
@@ -14,11 +14,11 @@ export default async function EditCoursePage({
   const sp = await searchParams;
   const supabase = createAdminClient();
 
-  const { data: course } = await supabase.from("courses").select("*").eq("id", id).single();
+  const { data: course } = await supabase.from("classes").select("*").eq("id", id).single();
   if (!course) notFound();
 
   const { data: mentors } = await supabase.from("profiles").select("id, full_name").eq("role", "mentor");
-  const updateCourseWithId = updateCourse.bind(null, id);
+  const updateClassWithId = updateClass.bind(null, id);
 
   return (
     <div className="mx-auto max-w-lg">
@@ -26,7 +26,7 @@ export default async function EditCoursePage({
 
       {sp.error && <div className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{sp.error}</div>}
 
-      <form action={updateCourseWithId} className="card mt-6 space-y-4">
+      <form action={updateClassWithId} className="card mt-6 space-y-4">
         <div>
           <label className="label" htmlFor="name">Class name</label>
           <input className="input" id="name" name="name" required defaultValue={course.name} />
@@ -39,7 +39,7 @@ export default async function EditCoursePage({
           <label className="label" htmlFor="grade_level">Grade level</label>
           <select className="input" id="grade_level" name="grade_level" defaultValue={course.grade_level}>
             <option value="All levels">All levels</option>
-            {COURSE_GRADE_LEVELS.map((g) => (
+            {CLASS_GRADE_LEVELS.map((g) => (
               <option key={g} value={g}>{g}</option>
             ))}
           </select>

@@ -16,7 +16,7 @@ async function requireAdmin() {
   return supabase;
 }
 
-export async function createCourse(formData: FormData) {
+export async function createClass(formData: FormData) {
   const supabase = await requireAdmin();
 
   const name = String(formData.get("name") ?? "").trim();
@@ -27,10 +27,10 @@ export async function createCourse(formData: FormData) {
   const mentorId = String(formData.get("mentor_id") ?? "") || null;
 
   if (!name || Number.isNaN(monthlyFeeRM) || monthlyFeeRM < 0) {
-    redirect("/admin/courses/new?error=" + encodeURIComponent("Please fill in a valid name and fee."));
+    redirect("/admin/classes/new?error=" + encodeURIComponent("Please fill in a valid name and fee."));
   }
 
-  const { error } = await supabase.from("courses").insert({
+  const { error } = await supabase.from("classes").insert({
     name,
     description,
     grade_level: gradeLevel || "All levels",
@@ -40,14 +40,14 @@ export async function createCourse(formData: FormData) {
   });
 
   if (error) {
-    redirect("/admin/courses/new?error=" + encodeURIComponent(error.message));
+    redirect("/admin/classes/new?error=" + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/admin/courses");
-  redirect("/admin/courses?created=1");
+  revalidatePath("/admin/classes");
+  redirect("/admin/classes?created=1");
 }
 
-export async function updateCourse(courseId: string, formData: FormData) {
+export async function updateClass(classId: string, formData: FormData) {
   const supabase = await requireAdmin();
 
   const name = String(formData.get("name") ?? "").trim();
@@ -59,7 +59,7 @@ export async function updateCourse(courseId: string, formData: FormData) {
   const isActive = formData.get("is_active") === "on";
 
   const { error } = await supabase
-    .from("courses")
+    .from("classes")
     .update({
       name,
       description,
@@ -69,12 +69,12 @@ export async function updateCourse(courseId: string, formData: FormData) {
       mentor_id: mentorId,
       is_active: isActive,
     })
-    .eq("id", courseId);
+    .eq("id", classId);
 
   if (error) {
-    redirect(`/admin/courses/${courseId}/edit?error=` + encodeURIComponent(error.message));
+    redirect(`/admin/classes/${classId}/edit?error=` + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/admin/courses");
-  redirect("/admin/courses?updated=1");
+  revalidatePath("/admin/classes");
+  redirect("/admin/classes?updated=1");
 }

@@ -1,8 +1,8 @@
-import { createCourse } from "@/actions/courses";
+import { createClass } from "@/actions/classes";
 import { createAdminClient } from "@/lib/supabase/server";
-import { COURSE_GRADE_LEVELS } from "@/lib/grades";
+import { CLASS_GRADE_LEVELS } from "@/lib/grades";
 
-export default async function NewCoursePage({
+export default async function NewClassPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
@@ -17,7 +17,7 @@ export default async function NewCoursePage({
 
       {params.error && <div className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{params.error}</div>}
 
-      <form action={createCourse} className="card mt-6 space-y-4">
+      <form action={createClass} className="card mt-6 space-y-4">
         <div>
           <label className="label" htmlFor="name">Class name</label>
           <input className="input" id="name" name="name" required />
@@ -30,7 +30,7 @@ export default async function NewCoursePage({
           <label className="label" htmlFor="grade_level">Grade level</label>
           <select className="input" id="grade_level" name="grade_level" defaultValue="All levels">
             <option value="All levels">All levels</option>
-            {COURSE_GRADE_LEVELS.map((g) => (
+            {CLASS_GRADE_LEVELS.map((g) => (
               <option key={g} value={g}>{g}</option>
             ))}
           </select>

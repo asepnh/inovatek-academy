@@ -23,23 +23,23 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   const studentId = body?.student_id as string | undefined;
-  const courseId = body?.course_id as string | undefined;
+  const classId = body?.class_id as string | undefined;
   const present = body?.present as boolean | undefined;
-  if (!studentId || !courseId || typeof present !== "boolean") {
-    return NextResponse.json({ message: "Missing student, course, or status." }, { status: 400 });
+  if (!studentId || !classId || typeof present !== "boolean") {
+    return NextResponse.json({ message: "Missing student, class, or status." }, { status: 400 });
   }
 
-  // RLS restricts this to enrollments in a course this mentor owns.
+  // RLS restricts this to enrollments in a class this mentor owns.
   const { data: enrollment } = await supabase
     .from("enrollments")
     .select("id, status")
     .eq("student_id", studentId)
-    .eq("course_id", courseId)
+    .eq("class_id", classId)
     .maybeSingle();
 
   if (!enrollment || enrollment.status !== "active") {
     return NextResponse.json(
-      { message: "Student is not actively enrolled in this course." },
+      { message: "Student is not actively enrolled in this class." },
       { status: 409 }
     );
   }
@@ -52,27 +52,27 @@ export async function POST(req: NextRequest) {
       .from("attendance")
       .select("id")
       .eq("student_id", studentId)
-      .eq("course_id", courseId)
+      .eq("class_id", classId)
       .gte("scanned_at", startOfDay.toISOString())
       .maybeSingle();
 
     if (!existing) {
       const { error } = await supabase.from("attendance").insert({
         student_id: studentId,
-        course_id: courseId,
+        class_id: classId,
         mentor_id: user.id,
         status: "present",
       });
       if (error) return NextResponse.json({ message: error.message }, { status: 500 });
     }
   } else {
-    // Requires the "attendance: mentor delete own course" RLS policy from
-    // migration 0002 — run that migration if this starts failing silently.
+    // Requires the "attendance: mentor delete own class" RLS policy from
+    // migration 0002/0003 — run those migrations if this starts failing silently.
     const { error } = await supabase
       .from("attendance")
       .delete()
       .eq("student_id", studentId)
-      .eq("course_id", courseId)
+      .eq("class_id", classId)
       .gte("scanned_at", startOfDay.toISOString());
     if (error) return NextResponse.json({ message: error.message }, { status: 500 });
   }

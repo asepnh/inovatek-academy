@@ -10,7 +10,7 @@ interface RosterStudent {
 export default async function MentorAttendancePage({
   searchParams,
 }: {
-  searchParams: Promise<{ course?: string }>;
+  searchParams: Promise<{ class?: string }>;
 }) {
   const params = await searchParams;
   const supabase = await createClient();
@@ -19,21 +19,21 @@ export default async function MentorAttendancePage({
   } = await supabase.auth.getUser();
 
   const { data: courses } = await supabase
-    .from("courses")
+    .from("classes")
     .select("id, name")
     .eq("mentor_id", user!.id)
     .order("name");
 
-  const selectedCourseId = params.course ?? courses?.[0]?.id;
+  const selectedClassId = params.class ?? courses?.[0]?.id;
 
   let roster: RosterStudent[] = [];
   let presentIds = new Set<string>();
 
-  if (selectedCourseId) {
+  if (selectedClassId) {
     const { data: enrollments } = await supabase
       .from("enrollments")
       .select("students(id, full_name, grade)")
-      .eq("course_id", selectedCourseId)
+      .eq("class_id", selectedClassId)
       .eq("status", "active");
 
     roster = (enrollments ?? [])
@@ -47,7 +47,7 @@ export default async function MentorAttendancePage({
     const { data: todayAttendance } = await supabase
       .from("attendance")
       .select("student_id")
-      .eq("course_id", selectedCourseId)
+      .eq("class_id", selectedClassId)
       .gte("scanned_at", startOfDay.toISOString());
 
     presentIds = new Set((todayAttendance ?? []).map((a) => a.student_id));
@@ -64,7 +64,7 @@ export default async function MentorAttendancePage({
       {courses && courses.length > 0 && (
         <>
           <form method="get" className="flex items-center gap-2">
-            <select name="course" className="input" defaultValue={selectedCourseId}>
+            <select name="class" className="input" defaultValue={selectedClassId}>
               {courses.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
@@ -85,14 +85,14 @@ export default async function MentorAttendancePage({
                 </div>
                 <AttendanceToggle
                   studentId={s.id}
-                  courseId={selectedCourseId!}
+                  classId={selectedClassId!}
                   initialPresent={presentIds.has(s.id)}
                 />
               </div>
             ))}
             {roster.length === 0 && (
               <p className="py-6 text-center text-sm text-slate-500">
-                No active students enrolled in this course.
+                No active students enrolled in this class.
               </p>
             )}
           </div>

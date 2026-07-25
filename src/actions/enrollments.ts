@@ -12,24 +12,24 @@ export async function enrollStudent(formData: FormData) {
   if (!user) redirect("/login");
 
   const studentId = String(formData.get("student_id") ?? "");
-  const courseId = String(formData.get("course_id") ?? "");
+  const classId = String(formData.get("class_id") ?? "");
 
-  if (!studentId || !courseId) {
-    redirect("/parent/courses?error=" + encodeURIComponent("Choose a student and a class."));
+  if (!studentId || !classId) {
+    redirect("/parent/classes?error=" + encodeURIComponent("Choose a student and a class."));
   }
 
   // RLS ensures this student actually belongs to the signed-in parent.
   const { error } = await supabase
     .from("enrollments")
-    .insert({ student_id: studentId, course_id: courseId, status: "pending" });
+    .insert({ student_id: studentId, class_id: classId, status: "pending" });
 
   if (error) {
     const message = error.code === "23505" ? "Already enrolled in this class." : error.message;
-    redirect("/parent/courses?error=" + encodeURIComponent(message));
+    redirect("/parent/classes?error=" + encodeURIComponent(message));
   }
 
   revalidatePath("/parent");
-  redirect("/parent/courses?enrolled=1");
+  redirect("/parent/classes?enrolled=1");
 }
 
 async function requireStaff() {

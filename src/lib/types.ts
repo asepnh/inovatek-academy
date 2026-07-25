@@ -21,7 +21,7 @@ export interface Student {
   created_at: string;
 }
 
-export interface Course {
+export interface Class {
   id: string;
   name: string;
   description: string;
@@ -36,7 +36,7 @@ export interface Course {
 export interface Enrollment {
   id: string;
   student_id: string;
-  course_id: string;
+  class_id: string;
   status: EnrollmentStatus;
   enrolled_at: string;
 }
@@ -45,7 +45,7 @@ export interface Payment {
   id: string;
   enrollment_id: string;
   student_id: string;
-  course_id: string;
+  class_id: string;
   period_month: number;
   period_year: number;
   amount_cents: number;
@@ -60,7 +60,7 @@ export interface Payment {
 export interface AttendanceRecord {
   id: string;
   student_id: string;
-  course_id: string;
+  class_id: string;
   mentor_id: string;
   status: AttendanceStatus;
   scanned_at: string;

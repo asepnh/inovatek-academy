@@ -17,12 +17,12 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   const qrToken = body?.qr_token as string | undefined;
-  const courseId = body?.course_id as string | undefined;
-  if (!qrToken || !courseId) {
-    return NextResponse.json({ message: "Missing QR token or course." }, { status: 400 });
+  const classId = body?.class_id as string | undefined;
+  if (!qrToken || !classId) {
+    return NextResponse.json({ message: "Missing QR token or class." }, { status: 400 });
   }
 
-  // RLS restricts this select to students enrolled in a course this mentor
+  // RLS restricts this select to students enrolled in a class this mentor
   // owns, so an unrelated student's QR simply won't resolve.
   const { data: student } = await supabase
     .from("students")
@@ -31,19 +31,19 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (!student) {
-    return NextResponse.json({ message: "QR code not recognized for your courses." }, { status: 404 });
+    return NextResponse.json({ message: "QR code not recognized for your classes." }, { status: 404 });
   }
 
   const { data: enrollment } = await supabase
     .from("enrollments")
     .select("id, status")
     .eq("student_id", student.id)
-    .eq("course_id", courseId)
+    .eq("class_id", classId)
     .maybeSingle();
 
   if (!enrollment || enrollment.status !== "active") {
     return NextResponse.json(
-      { message: "Student is not actively enrolled in this course.", studentName: student.full_name },
+      { message: "Student is not actively enrolled in this class.", studentName: student.full_name },
       { status: 409 }
     );
   }
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     .from("attendance")
     .select("id")
     .eq("student_id", student.id)
-    .eq("course_id", courseId)
+    .eq("class_id", classId)
     .gte("scanned_at", startOfDay.toISOString())
     .maybeSingle();
 
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
   const { error } = await supabase.from("attendance").insert({
     student_id: student.id,
-    course_id: courseId,
+    class_id: classId,
     mentor_id: user.id,
     status: "present",
   });

@@ -7,7 +7,7 @@ export default async function AdminEnrollmentsPage() {
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("id, status, enrolled_at, students(full_name, grade), courses(name)")
+    .select("id, status, enrolled_at, students(full_name, grade), classes(name)")
     .order("enrolled_at", { ascending: false });
 
   return (
@@ -28,7 +28,7 @@ export default async function AdminEnrollmentsPage() {
           <tbody className="divide-y divide-slate-100">
             {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {
               const student = Array.isArray(e.students) ? e.students[0] : e.students;
-              const course = Array.isArray(e.courses) ? e.courses[0] : e.courses;
+              const course = Array.isArray(e.classes) ? e.classes[0] : e.classes;
               return (
                 <tr key={e.id}>
                   <td className="py-2">{student?.full_name} <span className="text-xs text-slate-400">({student?.grade})</span></td>

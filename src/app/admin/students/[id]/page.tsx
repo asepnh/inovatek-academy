@@ -23,14 +23,14 @@ export default async function AdminStudentDetailPage({
 
   const { data: attendance } = await supabase
     .from("attendance")
-    .select("id, scanned_at, courses(name)")
+    .select("id, scanned_at, classes(name)")
     .eq("student_id", id)
     .order("scanned_at", { ascending: false })
     .limit(20);
 
   const { data: payments } = await supabase
     .from("payments")
-    .select("id, status, amount_cents, period_month, period_year, courses(name)")
+    .select("id, status, amount_cents, period_month, period_year, classes(name)")
     .eq("student_id", id)
     .order("period_year", { ascending: false })
     .order("period_month", { ascending: false });
@@ -52,7 +52,7 @@ export default async function AdminStudentDetailPage({
           <h2 className="font-semibold text-slate-900">Payment history</h2>
           <ul className="mt-3 divide-y divide-slate-100">
             {payments?.map((p: NonNullable<typeof payments>[number]) => {
-              const course = Array.isArray(p.courses) ? p.courses[0] : p.courses;
+              const course = Array.isArray(p.classes) ? p.classes[0] : p.classes;
               return (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">
                   <span>{course?.name} — {monthName(p.period_month)} {p.period_year}</span>
@@ -72,7 +72,7 @@ export default async function AdminStudentDetailPage({
         <h2 className="font-semibold text-slate-900">Attendance log</h2>
         <ul className="mt-3 divide-y divide-slate-100">
           {attendance?.map((a: NonNullable<typeof attendance>[number]) => {
-            const course = Array.isArray(a.courses) ? a.courses[0] : a.courses;
+            const course = Array.isArray(a.classes) ? a.classes[0] : a.classes;
             return (
               <li key={a.id} className="flex items-center justify-between py-2 text-sm">
                 <span>{course?.name}</span>

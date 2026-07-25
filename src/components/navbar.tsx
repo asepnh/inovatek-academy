@@ -6,7 +6,7 @@ export function Navbar({
   links,
 }: {
   role: string;
-  links: { href: string; label: string }[];
+  links: { href: string; label: string; badge?: number }[];
 }) {
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -20,9 +20,14 @@ export function Navbar({
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900"
+                className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
               >
                 {link.label}
+                {!!link.badge && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white">
+                    {link.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>
@@ -34,8 +39,17 @@ export function Navbar({
       </div>
       <nav className="flex gap-4 overflow-x-auto border-t border-slate-100 px-6 py-2 sm:hidden">
         {links.map((link) => (
-          <Link key={link.href} href={link.href} className="whitespace-nowrap text-sm font-medium text-slate-600">
+          <Link
+            key={link.href}
+            href={link.href}
+            className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-slate-600"
+          >
             {link.label}
+            {!!link.badge && (
+              <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white">
+                {link.badge}
+              </span>
+            )}
           </Link>
         ))}
       </nav>

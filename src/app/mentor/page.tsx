@@ -16,7 +16,7 @@ export default async function MentorDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">My Courses</h1>
+      <h1 className="text-2xl font-bold text-slate-900">My Classes</h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {courses?.map((c: NonNullable<typeof courses>[number]) => {
@@ -36,7 +36,7 @@ export default async function MentorDashboard() {
           );
         })}
         {(!courses || courses.length === 0) && (
-          <p className="text-sm text-slate-500">No courses assigned to you yet. Ask an admin to assign one.</p>
+          <p className="text-sm text-slate-500">No classes assigned to you yet. Ask an admin to assign one.</p>
         )}
       </div>
     </div>

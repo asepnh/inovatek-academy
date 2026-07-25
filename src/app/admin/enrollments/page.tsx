@@ -19,7 +19,7 @@ export default async function AdminEnrollmentsPage() {
           <thead>
             <tr className="border-b border-slate-200 text-slate-500">
               <th className="pb-2 font-medium">Student</th>
-              <th className="pb-2 font-medium">Course</th>
+              <th className="pb-2 font-medium">Class</th>
               <th className="pb-2 font-medium">Requested</th>
               <th className="pb-2 font-medium">Status</th>
               <th className="pb-2 font-medium">Actions</th>

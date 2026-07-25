@@ -27,7 +27,7 @@ export default async function HomePage() {
         className="h-28 w-28 rounded-2xl shadow-sm sm:h-36 sm:w-36"
       />
       <p className="mt-4 max-w-xl text-lg text-slate-600">
-        Enroll your child, register for courses, pay monthly fees online, and
+        Enroll your child, register for classes, pay monthly fees online, and
         track attendance and payment status — all in one place.
       </p>
       <div className="mt-8 flex gap-4">
@@ -43,7 +43,7 @@ export default async function HomePage() {
         <div className="card text-left">
           <h2 className="font-semibold text-slate-900">Enroll &amp; register</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Add your child and sign up for courses in a few clicks.
+            Add your child and sign up for classes in a few clicks.
           </p>
         </div>
         <div className="card text-left">

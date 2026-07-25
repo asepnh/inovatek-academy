@@ -26,7 +26,7 @@ export default async function ParentCoursesPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">Browse courses</h1>
+      <h1 className="text-2xl font-bold text-slate-900">Browse classes</h1>
 
       {params.enrolled && (
         <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
@@ -71,7 +71,7 @@ export default async function ParentCoursesPage({
           </div>
         ))}
         {(!courses || courses.length === 0) && (
-          <p className="text-sm text-slate-500">No courses available right now.</p>
+          <p className="text-sm text-slate-500">No classes available right now.</p>
         )}
       </div>
     </div>

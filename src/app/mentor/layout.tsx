@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/navbar";
 
 const LINKS = [
-  { href: "/mentor", label: "My Courses" },
+  { href: "/mentor", label: "My Classes" },
   { href: "/mentor/attendance", label: "Attendance" },
   { href: "/mentor/students", label: "Students" },
 ];

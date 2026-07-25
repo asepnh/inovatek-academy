@@ -15,7 +15,7 @@ export async function enrollStudent(formData: FormData) {
   const courseId = String(formData.get("course_id") ?? "");
 
   if (!studentId || !courseId) {
-    redirect("/parent/courses?error=" + encodeURIComponent("Choose a student and a course."));
+    redirect("/parent/courses?error=" + encodeURIComponent("Choose a student and a class."));
   }
 
   // RLS ensures this student actually belongs to the signed-in parent.
@@ -24,7 +24,7 @@ export async function enrollStudent(formData: FormData) {
     .insert({ student_id: studentId, course_id: courseId, status: "pending" });
 
   if (error) {
-    const message = error.code === "23505" ? "Already enrolled in this course." : error.message;
+    const message = error.code === "23505" ? "Already enrolled in this class." : error.message;
     redirect("/parent/courses?error=" + encodeURIComponent(message));
   }
 

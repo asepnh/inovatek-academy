@@ -53,13 +53,13 @@ export default async function StudentDetailPage({
 
         <div className="card lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-slate-900">Enrolled courses</h2>
+            <h2 className="font-semibold text-slate-900">Enrolled classes</h2>
             <Link href="/parent/courses" className="text-sm font-medium text-brand-600 hover:underline">
               Browse courses
             </Link>
           </div>
           {(!enrollments || enrollments.length === 0) && (
-            <p className="mt-3 text-sm text-slate-500">Not enrolled in any courses yet.</p>
+            <p className="mt-3 text-sm text-slate-500">Not enrolled in any classes yet.</p>
           )}
           <ul className="mt-3 divide-y divide-slate-100">
             {enrollments?.map((e: NonNullable<typeof enrollments>[number]) => {

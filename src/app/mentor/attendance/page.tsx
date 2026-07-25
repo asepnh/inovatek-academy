@@ -58,7 +58,7 @@ export default async function MentorAttendancePage({
       <h1 className="text-2xl font-bold text-slate-900">Attendance</h1>
 
       {(!courses || courses.length === 0) && (
-        <p className="text-sm text-slate-500">You have no assigned courses yet.</p>
+        <p className="text-sm text-slate-500">You have no assigned classes yet.</p>
       )}
 
       {courses && courses.length > 0 && (

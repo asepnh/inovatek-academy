@@ -13,13 +13,13 @@ export default async function NewCoursePage({
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="text-2xl font-bold text-slate-900">New course</h1>
+      <h1 className="text-2xl font-bold text-slate-900">New class</h1>
 
       {params.error && <div className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{params.error}</div>}
 
       <form action={createCourse} className="card mt-6 space-y-4">
         <div>
-          <label className="label" htmlFor="name">Course name</label>
+          <label className="label" htmlFor="name">Class name</label>
           <input className="input" id="name" name="name" required />
         </div>
         <div>
@@ -52,7 +52,7 @@ export default async function NewCoursePage({
             ))}
           </select>
         </div>
-        <button type="submit" className="btn w-full">Create course</button>
+        <button type="submit" className="btn w-full">Create class</button>
       </form>
     </div>
   );

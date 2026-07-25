@@ -80,7 +80,7 @@ export async function markOverdueAndNotify() {
     await supabase.from("notifications").insert({
       parent_id: student.parent_id,
       title: "Payment overdue",
-      message: `${student.full_name}'s ${monthName(p.period_month)} ${p.period_year} fee for ${course?.name ?? "a course"} (RM ${(p.amount_cents / 100).toFixed(2)}) is overdue. Please make payment as soon as possible.`,
+      message: `${student.full_name}'s ${monthName(p.period_month)} ${p.period_year} fee for ${course?.name ?? "a class"} (RM ${(p.amount_cents / 100).toFixed(2)}) is overdue. Please make payment as soon as possible.`,
       type: "payment_overdue",
     });
 

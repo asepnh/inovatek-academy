@@ -13,15 +13,15 @@ export default async function AdminCoursesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Courses</h1>
-        <Link href="/admin/courses/new" className="btn">+ New course</Link>
+        <h1 className="text-2xl font-bold text-slate-900">Classes</h1>
+        <Link href="/admin/courses/new" className="btn">+ New class</Link>
       </div>
 
       <div className="card overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-slate-500">
-              <th className="pb-2 font-medium">Course</th>
+              <th className="pb-2 font-medium">Class</th>
               <th className="pb-2 font-medium">Grade level</th>
               <th className="pb-2 font-medium">Mentor</th>
               <th className="pb-2 font-medium">Fee</th>
@@ -54,7 +54,7 @@ export default async function AdminCoursesPage() {
             })}
             {(!courses || courses.length === 0) && (
               <tr>
-                <td colSpan={7} className="py-6 text-center text-slate-500">No courses yet.</td>
+                <td colSpan={7} className="py-6 text-center text-slate-500">No classes yet.</td>
               </tr>
             )}
           </tbody>

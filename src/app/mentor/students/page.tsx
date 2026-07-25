@@ -46,7 +46,7 @@ export default async function MentorStudentsPage() {
             <tr className="border-b border-slate-200 text-slate-500">
               <th className="pb-2 font-medium">Student</th>
               <th className="pb-2 font-medium">Grade</th>
-              <th className="pb-2 font-medium">Course</th>
+              <th className="pb-2 font-medium">Class</th>
               <th className="pb-2 font-medium">Enrollment</th>
               <th className="pb-2 font-medium">This month&apos;s payment</th>
             </tr>

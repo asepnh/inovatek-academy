@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbar";
 
 const LINKS = [
   { href: "/parent", label: "My Students" },
-  { href: "/parent/courses", label: "Browse Courses" },
+  { href: "/parent/courses", label: "Browse Classes" },
   { href: "/parent/payments", label: "Payments" },
 ];
 

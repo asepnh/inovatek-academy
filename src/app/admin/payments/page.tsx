@@ -42,7 +42,7 @@ export default async function AdminPaymentsPage({
           <thead>
             <tr className="border-b border-slate-200 text-slate-500">
               <th className="pb-2 font-medium">Student</th>
-              <th className="pb-2 font-medium">Course</th>
+              <th className="pb-2 font-medium">Class</th>
               <th className="pb-2 font-medium">Period</th>
               <th className="pb-2 font-medium">Amount</th>
               <th className="pb-2 font-medium">Due</th>

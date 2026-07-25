@@ -53,7 +53,7 @@ export async function payNow(paymentId: string) {
     name: parentProfile?.full_name || student.full_name,
     email: parentProfile?.email || user!.email!,
     mobile: parentProfile?.phone ?? undefined,
-    description: `${student.full_name} - ${course?.name ?? "Course"} - ${monthName(payment!.period_month)} ${payment!.period_year}`,
+    description: `${student.full_name} - ${course?.name ?? "Class"} - ${monthName(payment!.period_month)} ${payment!.period_year}`,
     referenceId: payment!.id,
   });
 

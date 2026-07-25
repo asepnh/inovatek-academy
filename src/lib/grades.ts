@@ -15,3 +15,9 @@ export const GRADE_OPTIONS = [
   "Secondary 5",
   "Other",
 ] as const;
+
+// Broad level options shown in the course "grade level" dropdown (which age
+// band a course targets — courses don't need per-grade precision like
+// students do). "All levels" is offered separately as the default in the
+// course forms themselves.
+export const COURSE_GRADE_LEVELS = ["Primary", "Secondary"] as const;

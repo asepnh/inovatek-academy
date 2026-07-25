@@ -29,7 +29,7 @@ export default async function MentorDashboard() {
               <p className="text-sm text-slate-600">{formatMYR(c.monthly_fee_cents)}/mo</p>
               <div className="mt-3 flex gap-3">
                 <Link href={`/mentor/attendance?course=${c.id}`} className="btn text-sm">
-                  Scan attendance
+                  Take attendance
                 </Link>
               </div>
             </div>

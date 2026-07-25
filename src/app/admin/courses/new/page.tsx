@@ -1,6 +1,6 @@
 import { createCourse } from "@/actions/courses";
 import { createAdminClient } from "@/lib/supabase/server";
-import { GRADE_OPTIONS } from "@/lib/grades";
+import { COURSE_GRADE_LEVELS } from "@/lib/grades";
 
 export default async function NewCoursePage({
   searchParams,
@@ -30,7 +30,7 @@ export default async function NewCoursePage({
           <label className="label" htmlFor="grade_level">Grade level</label>
           <select className="input" id="grade_level" name="grade_level" defaultValue="All levels">
             <option value="All levels">All levels</option>
-            {GRADE_OPTIONS.map((g) => (
+            {COURSE_GRADE_LEVELS.map((g) => (
               <option key={g} value={g}>{g}</option>
             ))}
           </select>

@@ -45,3 +45,17 @@ export async function createStudent(formData: FormData) {
   revalidatePath("/parent");
   redirect(`/parent/students/${student!.id}?created=1`);
 }
+
+export async function setFeeWaived(studentId: string, waived: boolean) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") redirect("/");
+
+  await supabase.from("students").update({ fee_waived: waived }).eq("id", studentId);
+  revalidatePath(`/admin/students/${studentId}`);
+}

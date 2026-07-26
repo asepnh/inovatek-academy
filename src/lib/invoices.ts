@@ -30,7 +30,7 @@ export async function generateMonthlyInvoices(month: number, year: number) {
 
   const { data: enrollments, error: enrollmentsError } = await supabase
     .from("enrollments")
-    .select("id, student_id, class_id, classes(monthly_fee_cents, name)")
+    .select("id, student_id, class_id, classes(monthly_fee_cents, name), students(fee_waived)")
     .eq("status", "active");
 
   if (enrollmentsError) throw enrollmentsError;
@@ -41,7 +41,8 @@ export async function generateMonthlyInvoices(month: number, year: number) {
   let created = 0;
   for (const e of enrollments ?? []) {
     const course = Array.isArray(e.classes) ? e.classes[0] : e.classes;
-    if (!course) continue;
+    const student = Array.isArray(e.students) ? e.students[0] : e.students;
+    if (!course || student?.fee_waived) continue;
 
     const { error: insertError, data } = await supabase
       .from("payments")

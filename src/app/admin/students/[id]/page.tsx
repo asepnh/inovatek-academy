@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/server";
 import { QrCodeCard } from "@/components/qr-code-card";
 import { PaymentStatusBadge } from "@/components/payment-status-badge";
+import { FeeWaivedToggle } from "@/components/fee-waived-toggle";
 import { formatDateTime, formatMYR, monthName } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export default async function AdminStudentDetailPage({
 
   const { data: student } = await supabase
     .from("students")
-    .select("id, full_name, grade, qr_token, profiles!students_parent_id_fkey(full_name, email, phone)")
+    .select("id, full_name, grade, qr_token, fee_waived, profiles!students_parent_id_fkey(full_name, email, phone)")
     .eq("id", id)
     .single();
 
@@ -45,6 +46,9 @@ export default async function AdminStudentDetailPage({
         <p className="mt-1 text-sm text-slate-600">
           Parent: {parent?.full_name} · {parent?.email} · {parent?.phone}
         </p>
+        <div className="mt-3">
+          <FeeWaivedToggle studentId={student.id} initialWaived={student.fee_waived} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

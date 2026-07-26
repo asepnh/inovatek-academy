@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { GRADE_OPTIONS } from "@/lib/grades";
+import { uploadStudentPhoto, deleteStudentPhoto } from "@/lib/student-photo";
 
 export async function createStudent(formData: FormData) {
   const supabase = await createClient();
@@ -42,8 +43,51 @@ export async function createStudent(formData: FormData) {
     redirect("/parent/students/new?error=" + encodeURIComponent(error.message));
   }
 
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    const { path, error: photoError } = await uploadStudentPhoto(supabase, student!.id, photo);
+    if (photoError) {
+      revalidatePath("/parent");
+      redirect(`/parent/students/${student!.id}?created=1&photoError=` + encodeURIComponent(photoError));
+    }
+    await supabase.from("students").update({ photo_path: path }).eq("id", student!.id);
+  }
+
   revalidatePath("/parent");
   redirect(`/parent/students/${student!.id}?created=1`);
+}
+
+export async function updateStudentPhoto(studentId: string, formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: existing } = await supabase
+    .from("students")
+    .select("photo_path")
+    .eq("id", studentId)
+    .single();
+
+  const photo = formData.get("photo");
+  if (!(photo instanceof File) || photo.size === 0) {
+    redirect(`/parent/students/${studentId}?error=` + encodeURIComponent("Please choose a photo."));
+  }
+
+  const { path, error: photoError } = await uploadStudentPhoto(supabase, studentId, photo as File);
+  if (photoError) {
+    redirect(`/parent/students/${studentId}?error=` + encodeURIComponent(photoError));
+  }
+
+  await supabase.from("students").update({ photo_path: path }).eq("id", studentId);
+
+  if (existing?.photo_path) {
+    await deleteStudentPhoto(supabase, existing.photo_path);
+  }
+
+  revalidatePath(`/parent/students/${studentId}`);
+  redirect(`/parent/students/${studentId}?photoUpdated=1`);
 }
 
 export async function setFeeWaived(studentId: string, waived: boolean) {

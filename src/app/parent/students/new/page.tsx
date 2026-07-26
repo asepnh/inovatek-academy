@@ -43,6 +43,13 @@ export default async function NewStudentPage({
             ))}
           </select>
         </div>
+        <div>
+          <label className="label" htmlFor="photo">Photo (optional)</label>
+          <input className="input" id="photo" name="photo" type="file" accept="image/*" capture="environment" />
+          <p className="mt-1 text-xs text-slate-500">
+            You can take a photo now or add one later from the student&apos;s page.
+          </p>
+        </div>
         <hr className="border-slate-200" />
         <div>
           <label className="label" htmlFor="parent_name">Parent name</label>

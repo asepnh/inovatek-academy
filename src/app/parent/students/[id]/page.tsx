@@ -3,23 +3,32 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { QrCodeCard } from "@/components/qr-code-card";
 import { PaymentStatusBadge } from "@/components/payment-status-badge";
+import { updateStudentPhoto } from "@/actions/students";
+import { getStudentPhotoUrl } from "@/lib/student-photo";
 import { formatDate, formatDateTime, formatMYR, monthName } from "@/lib/format";
+
+export const dynamic = "force-dynamic";
 
 export default async function StudentDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string; photoUpdated?: string; photoError?: string }>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
   const supabase = await createClient();
 
   const { data: student } = await supabase
     .from("students")
-    .select("id, full_name, grade, qr_token, created_at")
+    .select("id, full_name, grade, qr_token, photo_path, created_at")
     .eq("id", id)
     .single();
 
   if (!student) notFound();
+
+  const photoUrl = await getStudentPhotoUrl(supabase, student.photo_path);
 
   const { data: enrollments } = await supabase
     .from("enrollments")
@@ -48,10 +57,44 @@ export default async function StudentDetailPage({
         <p className="text-sm text-slate-500">{student.grade}</p>
       </div>
 
+      {sp.error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{sp.error}</div>}
+      {sp.photoUpdated && (
+        <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">Photo updated.</div>
+      )}
+      {sp.photoError && (
+        <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Student saved, but the photo failed to upload: {sp.photoError}. You can try again below.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="card flex flex-col items-center text-center">
+          {photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={photoUrl} alt={student.full_name} className="h-40 w-40 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-40 w-40 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-400">
+              No photo
+            </div>
+          )}
+          <form action={updateStudentPhoto.bind(null, student.id)} className="mt-4 w-full space-y-2">
+            <input
+              className="input text-sm"
+              name="photo"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              required
+            />
+            <button type="submit" className="btn-secondary w-full text-sm">
+              {photoUrl ? "Replace photo" : "Add photo"}
+            </button>
+          </form>
+        </div>
+
         <QrCodeCard studentName={student.full_name} qrToken={student.qr_token} />
 
-        <div className="card lg:col-span-2">
+        <div className="card lg:col-span-3">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-slate-900">Enrolled classes</h2>
             <Link href="/parent/classes" className="text-sm font-medium text-brand-600 hover:underline">

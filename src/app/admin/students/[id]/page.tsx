@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { QrCodeCard } from "@/components/qr-code-card";
 import { PaymentStatusBadge } from "@/components/payment-status-badge";
 import { FeeWaivedToggle } from "@/components/fee-waived-toggle";
+import { getStudentPhotoUrl } from "@/lib/student-photo";
 import { formatDateTime, formatMYR, monthName } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -17,12 +18,13 @@ export default async function AdminStudentDetailPage({
 
   const { data: student } = await supabase
     .from("students")
-    .select("id, full_name, grade, qr_token, fee_waived, profiles!students_parent_id_fkey(full_name, email, phone)")
+    .select("id, full_name, grade, qr_token, fee_waived, photo_path, profiles!students_parent_id_fkey(full_name, email, phone)")
     .eq("id", id)
     .single();
 
   if (!student) notFound();
   const parent = Array.isArray(student.profiles) ? student.profiles[0] : student.profiles;
+  const photoUrl = await getStudentPhotoUrl(supabase, student.photo_path);
 
   const { data: attendance } = await supabase
     .from("attendance")
@@ -40,14 +42,20 @@ export default async function AdminStudentDetailPage({
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">{student.full_name}</h1>
-        <p className="text-sm text-slate-500">{student.grade}</p>
-        <p className="mt-1 text-sm text-slate-600">
-          Parent: {parent?.full_name} · {parent?.email} · {parent?.phone}
-        </p>
-        <div className="mt-3">
-          <FeeWaivedToggle studentId={student.id} initialWaived={student.fee_waived} />
+      <div className="flex items-start gap-4">
+        {photoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photoUrl} alt={student.full_name} className="h-16 w-16 rounded-full object-cover" />
+        )}
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">{student.full_name}</h1>
+          <p className="text-sm text-slate-500">{student.grade}</p>
+          <p className="mt-1 text-sm text-slate-600">
+            Parent: {parent?.full_name} · {parent?.email} · {parent?.phone}
+          </p>
+          <div className="mt-3">
+            <FeeWaivedToggle studentId={student.id} initialWaived={student.fee_waived} />
+          </div>
         </div>
       </div>
 

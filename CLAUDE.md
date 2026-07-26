@@ -80,6 +80,25 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
   (`/api/export/payments`). Both are plain GET route handlers gated by an
   admin-role check, not server actions, since a form's `method="get"` needs
   to trigger a real browser download.
+- **Fee waivers**: `students.fee_waived` (migration
+  `0007_student_fee_waiver.sql`), toggled by an admin on
+  `/admin/students/[id]` via `src/components/fee-waived-toggle.tsx`.
+  `generateMonthlyInvoices()` skips creating a payment row for waived
+  students entirely (not a RM0 "paid" row). Mentor-facing payment status
+  displays are intentionally simplified to just three values — Paid,
+  Overdue, Waived — not the full `payment_status` enum.
+- **Student photos**: optional, uploaded via native camera capture
+  (`<input type="file" capture="environment">`, not a live `getUserMedia`
+  stream — much more reliable across mobile browsers than the QR scanner).
+  Stored in the private `student-photos` Supabase Storage bucket (migration
+  `0008_student_photos.sql`), path `<student_id>/<timestamp>.<ext>`, RLS
+  scoped the same way as the DB tables (parent owns their own kids' photos,
+  mentors can read photos of students in their assigned classes via
+  `is_student_in_mentors_class()`, admin sees all). `students.photo_path`
+  stores the storage path, not a public URL — `src/lib/student-photo.ts`
+  generates a short-lived signed URL on each page render via
+  `getStudentPhotoUrl()`. Parents can add/replace a photo from
+  `/parent/students/[id]`; it's optional at signup.
 
 ## Current status (as of handoff)
 

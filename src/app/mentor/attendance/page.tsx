@@ -8,7 +8,6 @@ interface RosterStudent {
   id: string;
   full_name: string;
   grade: string;
-  fee_waived: boolean;
 }
 
 export default async function MentorAttendancePage({
@@ -33,12 +32,11 @@ export default async function MentorAttendancePage({
 
   let roster: RosterStudent[] = [];
   let presentIds = new Set<string>();
-  let paymentByStudent = new Map<string, string>();
 
   if (selectedClassId) {
     const { data: enrollments } = await supabase
       .from("enrollments")
-      .select("students(id, full_name, grade, fee_waived)")
+      .select("students(id, full_name, grade)")
       .eq("class_id", selectedClassId)
       .eq("status", "active");
 
@@ -57,16 +55,6 @@ export default async function MentorAttendancePage({
       .gte("scanned_at", startOfDay.toISOString());
 
     presentIds = new Set((todayAttendance ?? []).map((a) => a.student_id));
-
-    const now = new Date();
-    const { data: payments } = await supabase
-      .from("payments")
-      .select("student_id, status")
-      .eq("class_id", selectedClassId)
-      .eq("period_month", now.getMonth() + 1)
-      .eq("period_year", now.getFullYear());
-
-    paymentByStudent = new Map((payments ?? []).map((p) => [p.student_id, p.status]));
   }
 
   return (
@@ -123,10 +111,7 @@ export default async function MentorAttendancePage({
                   <div key={s.id} className="flex items-center justify-between py-3">
                     <div>
                       <p className="font-medium text-slate-900">{s.full_name}</p>
-                      <p className="text-xs text-slate-500">
-                        {s.grade} · Payment status:{" "}
-                        {s.fee_waived ? "Waived" : paymentByStudent.get(s.id) === "paid" ? "Paid" : "Overdue"}
-                      </p>
+                      <p className="text-xs text-slate-500">{s.grade}</p>
                     </div>
                     <AttendanceToggle
                       studentId={s.id}

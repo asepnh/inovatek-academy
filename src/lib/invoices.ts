@@ -67,7 +67,7 @@ export async function generateMonthlyInvoices(month: number, year: number) {
 
   const overdueResult = await markOverdueAndNotify();
 
-  return { invoicesCreated: created, ...overdueResult };
+  return { invoicesCreated: created, skipped: false, holidayNote: null as string | null, ...overdueResult };
 }
 
 export async function markOverdueAndNotify() {

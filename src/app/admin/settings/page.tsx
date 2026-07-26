@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { addBillingHoliday, removeBillingHoliday } from "@/actions/billing-holidays";
+import { RunInvoicesButton } from "@/components/run-invoices-button";
 import { monthName } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,19 @@ export default async function AdminSettingsPage({
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
+
+      <div className="card">
+        <h2 className="font-semibold text-slate-900">Run invoicing now</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          The automatic monthly run only fires once, on the 1st. Use this to catch students
+          enrolled/approved after that — it creates this month&apos;s payment row for any active
+          enrollment that doesn&apos;t already have one, and flags any already-overdue payments.
+          Safe to run as many times as you like.
+        </p>
+        <div className="mt-4">
+          <RunInvoicesButton />
+        </div>
+      </div>
 
       <div className="card">
         <h2 className="font-semibold text-slate-900">Billing holidays</h2>

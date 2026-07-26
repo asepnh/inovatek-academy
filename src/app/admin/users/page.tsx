@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/server";
-import { setUserRole } from "@/actions/users";
+import { DeleteUserButton } from "@/components/delete-user-button";
 import { formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +16,8 @@ export default async function AdminUsersPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-900">Users</h1>
       <p className="text-sm text-slate-600">
-        Everyone who signs up starts as a Parent. Promote an account to Mentor
-        or Admin here once they&apos;ve created their account.
+        Everyone who signs up starts as a Parent. Edit an account to promote
+        it to Mentor or Admin.
       </p>
 
       <div className="card overflow-x-auto">
@@ -28,7 +29,7 @@ export default async function AdminUsersPage() {
               <th className="pb-2 font-medium">Phone</th>
               <th className="pb-2 font-medium">Role</th>
               <th className="pb-2 font-medium">Joined</th>
-              <th className="pb-2 font-medium">Change role</th>
+              <th className="pb-2 font-medium"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -41,19 +42,21 @@ export default async function AdminUsersPage() {
                   <span className="badge bg-slate-100 text-slate-700 capitalize">{p.role}</span>
                 </td>
                 <td className="py-2">{formatDate(p.created_at)}</td>
-                <td className="py-2">
-                  <div className="flex gap-2">
-                    {(["parent", "mentor", "admin"] as const)
-                      .filter((r) => r !== p.role)
-                      .map((r) => (
-                        <form key={r} action={setUserRole.bind(null, p.id, r)}>
-                          <button className="btn-secondary text-xs capitalize">Make {r}</button>
-                        </form>
-                      ))}
+                <td className="py-2 text-right">
+                  <div className="flex items-center justify-end gap-3">
+                    <Link href={`/admin/users/${p.id}/edit`} className="text-brand-600 hover:underline">
+                      Edit
+                    </Link>
+                    <DeleteUserButton userId={p.id} role={p.role} className="text-red-600 hover:underline" />
                   </div>
                 </td>
               </tr>
             ))}
+            {(!profiles || profiles.length === 0) && (
+              <tr>
+                <td colSpan={6} className="py-6 text-center text-slate-500">No users yet.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

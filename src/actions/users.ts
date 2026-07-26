@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
 async function requireAdmin() {
@@ -13,7 +13,7 @@ async function requireAdmin() {
   if (!user) redirect("/login");
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/");
-  return supabase;
+  return { supabase, currentUserId: user!.id };
 }
 
 /**
@@ -23,7 +23,30 @@ async function requireAdmin() {
  * elevated access.
  */
 export async function setUserRole(userId: string, role: UserRole) {
-  const supabase = await requireAdmin();
-  await supabase.from("profiles").update({ role }).eq("id", userId);
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("profiles").update({ role }).eq("id", userId);
   revalidatePath("/admin/users");
+  if (error) return { error: error.message };
+  return {};
+}
+
+/**
+ * Deletes an account entirely via the Supabase Admin API. This removes the
+ * auth.users row, which cascades to profiles (on delete cascade), and for a
+ * parent, further cascades to their students -> enrollments/payments/
+ * attendance (also on delete cascade, see migration 0001_init.sql). Deleting
+ * a mentor is non-destructive elsewhere: classes.mentor_id is set null, not
+ * cascaded.
+ */
+export async function deleteUser(userId: string) {
+  const { currentUserId } = await requireAdmin();
+  if (userId === currentUserId) {
+    return { error: "You can't delete your own account." };
+  }
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.auth.admin.deleteUser(userId);
+  revalidatePath("/admin/users");
+  if (error) return { error: error.message };
+  return {};
 }

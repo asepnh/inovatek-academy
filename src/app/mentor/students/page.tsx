@@ -8,11 +8,11 @@ function paymentStatusText(waived: boolean | undefined, status: string | undefin
 
 export default async function MentorStudentsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  const { data: courses } = await supabase.from("classes").select("id, name").eq("mentor_id", user!.id);
+  // No .eq("mentor_id", ...) filter here on purpose: RLS (is_mentor_of_class,
+  // see migration 0010) already restricts this to classes the signed-in
+  // mentor is either the primary mentor or a co-mentor for.
+  const { data: courses } = await supabase.from("classes").select("id, name");
   const classIds = (courses ?? []).map((c) => c.id);
 
   const { data: enrollments } = classIds.length

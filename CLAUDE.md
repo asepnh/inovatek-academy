@@ -99,6 +99,27 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
   generates a short-lived signed URL on each page render via
   `getStudentPhotoUrl()`. Parents can add/replace a photo from
   `/parent/students/[id]`; it's optional at signup.
+- **Invite links**: `public.invites` (migration `0009_invites.sql`) lets an
+  admin generate a single-use signup link that pre-sets the signer-upper's
+  role (`/admin/users/new` → "Send an invite link instead"). Consumed
+  server-side in `signUp()` (`src/actions/auth.ts`) via the service-role
+  client, so no public RLS read access to the table is needed. Separately,
+  `createUserAccount()` in `src/actions/users.ts` lets an admin create an
+  account directly with a generated temporary password instead, for when
+  they don't want to wait on the other person to self-register.
+- **Co-mentors**: a class keeps its single primary `classes.mentor_id`
+  unchanged, but can also have extra mentors via `public.class_co_mentors`
+  (migration `0010_class_co_mentors.sql`), managed from a checklist on
+  `/admin/classes/[id]/edit`. A co-mentor is a completely normal `mentor`
+  role account — same UI, no special-casing — they just see an extra class.
+  `public.is_mentor_of_class(class_id, mentor_id)` is the single source of
+  truth for "can this mentor see this class" (primary OR co-mentor),
+  reused by every mentor-facing RLS policy on `classes`/`enrollments`/
+  `payments`/`attendance`, and by `is_student_in_mentors_class()` for the
+  student-roster policy. The three mentor pages (`/mentor`,
+  `/mentor/attendance`, `/mentor/students`) deliberately don't filter by
+  `mentor_id` in the query — they rely entirely on RLS to return only the
+  classes that mentor can see.
 
 ## Current status (as of handoff)
 

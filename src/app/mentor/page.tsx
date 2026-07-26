@@ -3,14 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function MentorDashboard() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
+  // No .eq("mentor_id", ...) filter here on purpose: RLS (is_mentor_of_class,
+  // see migration 0010) already restricts this to classes the signed-in
+  // mentor is either the primary mentor or a co-mentor for.
   const { data: courses } = await supabase
     .from("classes")
     .select("id, name, grade_level, schedule, enrollments(count)")
-    .eq("mentor_id", user!.id)
     .order("name");
 
   return (

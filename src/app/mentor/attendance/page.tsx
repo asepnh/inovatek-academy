@@ -19,14 +19,13 @@ export default async function MentorAttendancePage({
   const params = await searchParams;
   const mode = params.mode === "scan" ? "scan" : "roster";
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
+  // No .eq("mentor_id", ...) filter here on purpose: RLS (is_mentor_of_class,
+  // see migration 0010) already restricts this to classes the signed-in
+  // mentor is either the primary mentor or a co-mentor for.
   const { data: courses } = await supabase
     .from("classes")
     .select("id, name")
-    .eq("mentor_id", user!.id)
     .order("name");
 
   const selectedClassId = params.class ?? courses?.[0]?.id;

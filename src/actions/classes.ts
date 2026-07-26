@@ -92,3 +92,25 @@ export async function deleteClass(classId: string) {
   revalidatePath("/admin/classes");
   return {};
 }
+
+/**
+ * Replaces the full set of co-mentors for a class. A co-mentor is a normal
+ * mentor account that can also see/manage this class alongside its primary
+ * mentor_id -- see migration 0010_class_co_mentors.sql.
+ */
+export async function setClassCoMentors(classId: string, mentorIds: string[]) {
+  const supabase = await requireAdmin();
+
+  const { error: deleteError } = await supabase.from("class_co_mentors").delete().eq("class_id", classId);
+  if (deleteError) return { error: deleteError.message };
+
+  if (mentorIds.length > 0) {
+    const { error: insertError } = await supabase
+      .from("class_co_mentors")
+      .insert(mentorIds.map((mentorId) => ({ class_id: classId, mentor_id: mentorId })));
+    if (insertError) return { error: insertError.message };
+  }
+
+  revalidatePath(`/admin/classes/${classId}/edit`);
+  return {};
+}

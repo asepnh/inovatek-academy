@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { updateClass } from "@/actions/classes";
 import { createAdminClient } from "@/lib/supabase/server";
 import { CLASS_GRADE_LEVELS } from "@/lib/grades";
+import { CoMentorsForm } from "@/components/co-mentors-form";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,12 @@ export default async function EditClassPage({
   if (!course) notFound();
 
   const { data: mentors } = await supabase.from("profiles").select("id, full_name").eq("role", "mentor");
+  const { data: coMentorRows } = await supabase
+    .from("class_co_mentors")
+    .select("mentor_id")
+    .eq("class_id", id);
+  const coMentorIds = (coMentorRows ?? []).map((r: { mentor_id: string }) => r.mentor_id);
+  const otherMentors = (mentors ?? []).filter((m: { id: string; full_name: string }) => m.id !== course.mentor_id);
   const updateClassWithId = updateClass.bind(null, id);
 
   return (
@@ -78,6 +85,18 @@ export default async function EditClassPage({
         </label>
         <button type="submit" className="btn w-full">Save changes</button>
       </form>
+
+      <div className="card mt-6">
+        <h2 className="font-semibold text-slate-900">Co-mentors</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Extra mentors who can also see this class&apos;s roster and take attendance for it,
+          alongside the primary mentor above. They appear as a normal mentor on their end — no
+          different UI.
+        </p>
+        <div className="mt-4">
+          <CoMentorsForm classId={course.id} mentors={otherMentors} initialSelectedIds={coMentorIds} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -91,3 +91,20 @@ export async function createUserAccount(input: {
   if (error) return { error: error.message };
   return { tempPassword };
 }
+
+/**
+ * Generates a single-use signup link that pre-sets the signer-upper's role
+ * (see migration 0009_invites.sql). The admin doesn't need to know the
+ * mentor's email/details in advance -- just send them this URL and they
+ * self-register normally at /signup, ending up with the given role instead
+ * of the default 'parent'. Consumed and validated server-side in
+ * src/actions/auth.ts's signUp().
+ */
+export async function createInvite(role: UserRole) {
+  const { supabase, currentUserId } = await requireAdmin();
+  const token = randomBytes(24).toString("base64url");
+
+  const { error } = await supabase.from("invites").insert({ token, role, created_by: currentUserId });
+  if (error) return { error: error.message };
+  return { token };
+}

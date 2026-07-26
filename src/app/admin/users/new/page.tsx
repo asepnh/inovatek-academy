@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CreateUserForm } from "@/components/create-user-form";
+import { CreateInviteLink } from "@/components/create-invite-link";
 
 export default function NewUserPage() {
   return (
@@ -17,6 +18,7 @@ export default function NewUserPage() {
       </div>
 
       <CreateUserForm />
+      <CreateInviteLink />
     </div>
   );
 }

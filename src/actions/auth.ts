@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
 function roleHome(role: UserRole) {
@@ -15,12 +15,32 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const fullName = String(formData.get("full_name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
+  const inviteToken = String(formData.get("invite") ?? "").trim();
 
   if (!email || !password || !fullName) {
-    redirect("/signup?error=" + encodeURIComponent("Please fill in all required fields."));
+    redirect("/signup?error=" + encodeURIComponent("Please fill in all required fields.") + inviteQuery(inviteToken));
   }
   if (password.length < 8) {
-    redirect("/signup?error=" + encodeURIComponent("Password must be at least 8 characters."));
+    redirect("/signup?error=" + encodeURIComponent("Password must be at least 8 characters.") + inviteQuery(inviteToken));
+  }
+
+  let role: UserRole = "parent";
+  let invite: { id: string; role: UserRole } | null = null;
+
+  if (inviteToken) {
+    const adminClient = createAdminClient();
+    const { data: invitedRow } = await adminClient
+      .from("invites")
+      .select("id, role, used_at, expires_at")
+      .eq("token", inviteToken)
+      .maybeSingle();
+
+    if (!invitedRow || invitedRow.used_at || new Date(invitedRow.expires_at) < new Date()) {
+      redirect("/signup?error=" + encodeURIComponent("This invite link is invalid or has expired."));
+    }
+
+    invite = { id: invitedRow.id, role: invitedRow.role };
+    role = invitedRow.role;
   }
 
   const supabase = await createClient();
@@ -28,12 +48,20 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      data: { full_name: fullName, phone, role: "parent" },
+      data: { full_name: fullName, phone, role },
     },
   });
 
   if (error) {
-    redirect("/signup?error=" + encodeURIComponent(error.message));
+    redirect("/signup?error=" + encodeURIComponent(error.message) + inviteQuery(inviteToken));
+  }
+
+  if (invite && data.user) {
+    const adminClient = createAdminClient();
+    await adminClient
+      .from("invites")
+      .update({ used_by: data.user.id, used_at: new Date().toISOString() })
+      .eq("id", invite.id);
   }
 
   if (!data.session) {
@@ -43,7 +71,11 @@ export async function signUp(formData: FormData) {
     );
   }
 
-  redirect("/parent");
+  redirect(role === "mentor" ? "/mentor" : role === "admin" ? "/admin" : "/parent");
+}
+
+function inviteQuery(token: string) {
+  return token ? "&invite=" + encodeURIComponent(token) : "";
 }
 
 export async function signIn(formData: FormData) {

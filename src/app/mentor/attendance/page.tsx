@@ -125,7 +125,7 @@ export default async function MentorAttendancePage({
                       <p className="font-medium text-slate-900">{s.full_name}</p>
                       <p className="text-xs text-slate-500">
                         {s.grade} · Payment status:{" "}
-                        {s.fee_waived ? "Waived" : paymentByStudent.get(s.id) === "paid" ? "Paid" : "Not Paid"}
+                        {s.fee_waived ? "Waived" : paymentByStudent.get(s.id) === "paid" ? "Paid" : "Overdue"}
                       </p>
                     </div>
                     <AttendanceToggle

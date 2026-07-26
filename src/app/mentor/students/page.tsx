@@ -3,7 +3,7 @@ import { monthName } from "@/lib/format";
 
 function paymentStatusText(waived: boolean | undefined, status: string | undefined) {
   if (waived) return "Waived";
-  return status === "paid" ? "Paid" : "Not Paid";
+  return status === "paid" ? "Paid" : "Overdue";
 }
 
 export default async function MentorStudentsPage() {

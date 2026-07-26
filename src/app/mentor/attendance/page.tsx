@@ -8,6 +8,7 @@ interface RosterStudent {
   id: string;
   full_name: string;
   grade: string;
+  fee_waived: boolean;
 }
 
 export default async function MentorAttendancePage({
@@ -37,7 +38,7 @@ export default async function MentorAttendancePage({
   if (selectedClassId) {
     const { data: enrollments } = await supabase
       .from("enrollments")
-      .select("students(id, full_name, grade)")
+      .select("students(id, full_name, grade, fee_waived)")
       .eq("class_id", selectedClassId)
       .eq("status", "active");
 
@@ -123,7 +124,7 @@ export default async function MentorAttendancePage({
                     <div>
                       <p className="font-medium text-slate-900">{s.full_name}</p>
                       <p className="text-xs text-slate-500">
-                        {s.grade} · Payment: {paymentByStudent.get(s.id) ?? "not billed yet"}
+                        {s.grade} · Payment: {s.fee_waived ? "Waived" : paymentByStudent.get(s.id) ?? "not billed yet"}
                       </p>
                     </div>
                     <AttendanceToggle

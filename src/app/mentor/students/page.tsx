@@ -14,7 +14,7 @@ export default async function MentorStudentsPage() {
   const { data: enrollments } = classIds.length
     ? await supabase
         .from("enrollments")
-        .select("id, status, students(id, full_name, grade), classes(id, name)")
+        .select("id, status, students(id, full_name, grade, fee_waived), classes(id, name)")
         .in("class_id", classIds)
         .order("enrolled_at", { ascending: false })
     : { data: [] };
@@ -63,7 +63,13 @@ export default async function MentorStudentsPage() {
                   <td className="py-2">{course?.name}</td>
                   <td className="py-2 capitalize">{e.status}</td>
                   <td className="py-2">
-                    {status ? <PaymentStatusBadge status={status as any} /> : <span className="text-slate-400">Not billed yet</span>}
+                    {student?.fee_waived ? (
+                      <span className="badge bg-blue-100 text-blue-700">Waived</span>
+                    ) : status ? (
+                      <PaymentStatusBadge status={status as any} />
+                    ) : (
+                      <span className="text-slate-400">Not billed yet</span>
+                    )}
                   </td>
                 </tr>
               );

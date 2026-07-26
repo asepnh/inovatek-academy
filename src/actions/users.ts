@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
@@ -49,4 +50,44 @@ export async function deleteUser(userId: string) {
   revalidatePath("/admin/users");
   if (error) return { error: error.message };
   return {};
+}
+
+/**
+ * Creates a brand-new account directly (rather than requiring the person to
+ * self-register at /signup) with a generated temporary password, which the
+ * admin shares with them out-of-band (no email provider is wired up in this
+ * app). The account is created with email_confirm: true so it's usable
+ * immediately, and its role is set via user_metadata so the existing
+ * handle_new_user() trigger creates the profile row with the right role in
+ * one step.
+ */
+export async function createUserAccount(input: {
+  fullName: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+}) {
+  await requireAdmin();
+
+  const fullName = input.fullName.trim();
+  const email = input.email.trim();
+  const phone = input.phone.trim();
+
+  if (!fullName || !email) {
+    return { error: "Name and email are required." };
+  }
+
+  const tempPassword = randomBytes(9).toString("base64url"); // ~12 url-safe chars
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.auth.admin.createUser({
+    email,
+    password: tempPassword,
+    email_confirm: true,
+    user_metadata: { full_name: fullName, phone, role: input.role },
+  });
+
+  revalidatePath("/admin/users");
+  if (error) return { error: error.message };
+  return { tempPassword };
 }

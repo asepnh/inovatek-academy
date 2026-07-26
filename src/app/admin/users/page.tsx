@@ -14,10 +14,13 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">Users</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-900">Users</h1>
+        <Link href="/admin/users/new" className="btn">+ New user</Link>
+      </div>
       <p className="text-sm text-slate-600">
         Everyone who signs up starts as a Parent. Edit an account to promote
-        it to Mentor or Admin.
+        it to Mentor or Admin, or create one directly from here.
       </p>
 
       <div className="card overflow-x-auto">

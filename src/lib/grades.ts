@@ -1,19 +1,18 @@
 // Grade / level options shown in the student enrollment dropdown.
 // Edit this list to match Inovatek Academy's actual class levels.
 export const GRADE_OPTIONS = [
-  "Preschool",
   "Primary 1",
   "Primary 2",
   "Primary 3",
   "Primary 4",
   "Primary 5",
   "Primary 6",
-  "Secondary 1",
-  "Secondary 2",
-  "Secondary 3",
-  "Secondary 4",
-  "Secondary 5",
-  "Secondary 6",
+  "Secondary 1 (SMP Kelas 7)",
+  "Secondary 2 (SMP Kelas 8)",
+  "Secondary 3 (SMP Kelas 9)",
+  "Secondary 4 (SMA Kelas 10)",
+  "Secondary 5 (SMA Kelas 11)",
+  "Foundation (SMA Kelas 12)",
   "Other",
 ] as const;
 

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatMYR } from "@/lib/format";
 
 export default async function MentorDashboard() {
   const supabase = await createClient();
@@ -10,7 +9,7 @@ export default async function MentorDashboard() {
 
   const { data: courses } = await supabase
     .from("classes")
-    .select("id, name, grade_level, schedule, monthly_fee_cents, enrollments(count)")
+    .select("id, name, grade_level, schedule, enrollments(count)")
     .eq("mentor_id", user!.id)
     .order("name");
 
@@ -26,7 +25,6 @@ export default async function MentorDashboard() {
               <h2 className="font-semibold text-slate-900">{c.name}</h2>
               <p className="text-xs text-slate-500">{c.grade_level} · {c.schedule || "No schedule set"}</p>
               <p className="mt-2 text-sm text-slate-600">{count} enrolled student{count === 1 ? "" : "s"}</p>
-              <p className="text-sm text-slate-600">{formatMYR(c.monthly_fee_cents)}/mo</p>
               <div className="mt-3 flex gap-3">
                 <Link href={`/mentor/attendance?class=${c.id}`} className="btn text-sm">
                   Take attendance

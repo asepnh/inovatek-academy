@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import { PaymentStatusBadge } from "@/components/payment-status-badge";
 import { monthName } from "@/lib/format";
+
+function paymentStatusText(waived: boolean | undefined, status: string | undefined) {
+  if (waived) return "Waived";
+  return status === "paid" ? "Paid" : "Not Paid";
+}
 
 export default async function MentorStudentsPage() {
   const supabase = await createClient();
@@ -48,7 +52,7 @@ export default async function MentorStudentsPage() {
               <th className="pb-2 font-medium">Grade</th>
               <th className="pb-2 font-medium">Class</th>
               <th className="pb-2 font-medium">Enrollment</th>
-              <th className="pb-2 font-medium">This month&apos;s payment</th>
+              <th className="pb-2 font-medium">Payment status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -62,15 +66,7 @@ export default async function MentorStudentsPage() {
                   <td className="py-2">{student?.grade}</td>
                   <td className="py-2">{course?.name}</td>
                   <td className="py-2 capitalize">{e.status}</td>
-                  <td className="py-2">
-                    {student?.fee_waived ? (
-                      <span className="badge bg-blue-100 text-blue-700">Waived</span>
-                    ) : status ? (
-                      <PaymentStatusBadge status={status as any} />
-                    ) : (
-                      <span className="text-slate-400">Not billed yet</span>
-                    )}
-                  </td>
+                  <td className="py-2">{paymentStatusText(student?.fee_waived, status)}</td>
                 </tr>
               );
             })}

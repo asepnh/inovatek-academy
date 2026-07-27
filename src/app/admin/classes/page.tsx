@@ -33,16 +33,16 @@ export default async function AdminClassesPage({
       )}
 
       <div className="card overflow-x-auto">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-center text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-slate-500">
-              <th className="pb-2 font-medium">Class</th>
-              <th className="pb-2 font-medium">Grade level</th>
-              <th className="pb-2 font-medium">Mentor</th>
-              <th className="pb-2 font-medium">Fee</th>
-              <th className="pb-2 font-medium">Enrolled</th>
-              <th className="pb-2 font-medium">Status</th>
-              <th className="pb-2 font-medium"></th>
+              <th className="px-3 pb-2 font-medium">Class</th>
+              <th className="px-3 pb-2 font-medium">Grade level</th>
+              <th className="px-3 pb-2 font-medium">Mentor</th>
+              <th className="px-3 pb-2 font-medium">Fee</th>
+              <th className="px-3 pb-2 font-medium">Enrolled</th>
+              <th className="px-3 pb-2 font-medium">Status</th>
+              <th className="px-3 pb-2 font-medium"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -51,18 +51,18 @@ export default async function AdminClassesPage({
               const count = Array.isArray(c.enrollments) ? c.enrollments[0]?.count ?? 0 : 0;
               return (
                 <tr key={c.id}>
-                  <td className="py-2">{c.name}</td>
-                  <td className="py-2">{c.grade_level}</td>
-                  <td className="py-2">{mentor?.full_name ?? <span className="text-slate-400">Unassigned</span>}</td>
-                  <td className="py-2">{formatMYR(c.monthly_fee_cents)}</td>
-                  <td className="py-2">{count}</td>
-                  <td className="py-2">
+                  <td className="px-3 py-2">{c.name}</td>
+                  <td className="px-3 py-2">{c.grade_level}</td>
+                  <td className="px-3 py-2">{mentor?.full_name ?? <span className="text-slate-400">Unassigned</span>}</td>
+                  <td className="px-3 py-2">{formatMYR(c.monthly_fee_cents)}</td>
+                  <td className="px-3 py-2">{count}</td>
+                  <td className="px-3 py-2">
                     <span className={`badge ${c.is_active ? "bg-green-100 text-green-800" : "bg-slate-100 text-slate-600"}`}>
                       {c.is_active ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="py-2 text-right">
-                    <div className="flex items-center justify-end gap-3">
+                  <td className="px-3 py-2">
+                    <div className="flex items-center justify-center gap-3">
                       <Link href={`/admin/classes/${c.id}/edit`} className="text-brand-600 hover:underline">Edit</Link>
                       <DeleteClassButton classId={c.id} className="text-red-600 hover:underline" />
                     </div>

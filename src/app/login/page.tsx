@@ -25,7 +25,17 @@ export default async function LoginPage({
         </div>
       )}
 
-      <form action={signIn} className="card mt-6 space-y-4">
+      <div className="mt-6">
+        <GoogleSignInButton />
+      </div>
+
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
+        <div className="h-px flex-1 bg-slate-200" />
+        or
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <form action={signIn} className="card mt-4 space-y-4">
         <input type="hidden" name="next" value={params.next ?? ""} />
         <div>
           <label className="label" htmlFor="email">Email</label>
@@ -37,16 +47,6 @@ export default async function LoginPage({
         </div>
         <button type="submit" className="btn w-full">Sign in</button>
       </form>
-
-      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
-        <div className="h-px flex-1 bg-slate-200" />
-        or
-        <div className="h-px flex-1 bg-slate-200" />
-      </div>
-
-      <div className="mt-4">
-        <GoogleSignInButton />
-      </div>
 
       <p className="mt-4 text-center text-sm text-slate-600">
         Don&apos;t have an account?{" "}

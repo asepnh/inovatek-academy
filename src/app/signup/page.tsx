@@ -40,7 +40,17 @@ export default async function SignupPage({
         </div>
       )}
 
-      <form action={signUp} className="card mt-6 space-y-4">
+      <div className="mt-6">
+        <GoogleSignInButton inviteToken={params.invite} />
+      </div>
+
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
+        <div className="h-px flex-1 bg-slate-200" />
+        or
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <form action={signUp} className="card mt-4 space-y-4">
         {params.invite && <input type="hidden" name="invite" value={params.invite} />}
         <div>
           <label className="label" htmlFor="full_name">Your full name</label>
@@ -61,16 +71,6 @@ export default async function SignupPage({
         </div>
         <button type="submit" className="btn w-full">Create account</button>
       </form>
-
-      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
-        <div className="h-px flex-1 bg-slate-200" />
-        or
-        <div className="h-px flex-1 bg-slate-200" />
-      </div>
-
-      <div className="mt-4">
-        <GoogleSignInButton inviteToken={params.invite} />
-      </div>
 
       <p className="mt-4 text-center text-sm text-slate-600">
         Already have an account?{" "}

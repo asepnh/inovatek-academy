@@ -12,7 +12,13 @@ export function GoogleSignInButton({ inviteToken }: { inviteToken?: string }) {
     setError(null);
 
     const supabase = createClient();
-    const redirectTo = `${window.location.origin}/auth/callback${
+    // Use the canonical site URL rather than window.location.origin: if a
+    // visitor lands on a domain variant (e.g. www) that isn't exactly what's
+    // allow-listed in Supabase's Redirect URLs, Supabase silently falls back
+    // to the Site URL default instead of erroring, dropping the OAuth code
+    // on the homepage with no session and no visible error.
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
+    const redirectTo = `${siteUrl}/auth/callback${
       inviteToken ? `?invite=${encodeURIComponent(inviteToken)}` : ""
     }`;
 

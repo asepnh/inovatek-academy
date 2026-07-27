@@ -5,7 +5,7 @@ import { GoogleSignInButton } from "@/components/google-sign-in-button";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string; next?: string; debug?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; next?: string }>;
 }) {
   const params = await searchParams;
 
@@ -14,11 +14,6 @@ export default async function LoginPage({
       <h1 className="text-2xl font-bold text-slate-900">Sign in</h1>
       <p className="mt-1 text-sm text-slate-600">Welcome back to Inovatek Academy.</p>
 
-      {params.debug && (
-        <div className="mt-4 whitespace-pre-wrap break-all rounded-lg bg-slate-900 px-4 py-3 text-xs text-slate-100">
-          {params.debug}
-        </div>
-      )}
       {params.message && (
         <div className="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
           {params.message}

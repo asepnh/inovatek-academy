@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent("Missing auth code."));
   }
 
-  const setCookieNames: string[] = [];
   const response = NextResponse.redirect(`${site}/`);
 
   const supabase = createServerClient(
@@ -44,10 +43,7 @@ export async function GET(req: NextRequest) {
           return req.cookies.getAll();
         },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            setCookieNames.push(name);
-            response.cookies.set(name, value, options);
-          });
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
         },
       },
     }
@@ -55,22 +51,26 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-  // TEMPORARY debug: confirm exactly what the exchange produced and what
-  // origin/cookies we're working with, since sign-in has been silently
-  // failing with no visible error. Redirects to the SAME `response` object
-  // (so any cookies already attached to it travel along too) with its
-  // Location header swapped to carry debug info.
-  const debugUrl = new URL(`${site}/login`);
-  debugUrl.searchParams.set(
-    "debug",
-    JSON.stringify({
-      reqOrigin: req.nextUrl.origin,
-      siteEnv: site,
-      hadError: error ? error.message : null,
-      userId: data?.user?.id ?? null,
-      cookiesSet: setCookieNames,
-    })
-  );
-  response.headers.set("location", debugUrl.toString());
+  if (error) {
+    return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent(error.message));
+  }
+
+  if (inviteToken && data.user) {
+    const adminClient = createAdminClient();
+    const { data: invite } = await adminClient
+      .from("invites")
+      .select("id, role, used_at, expires_at")
+      .eq("token", inviteToken)
+      .maybeSingle();
+
+    if (invite && !invite.used_at && new Date(invite.expires_at) > new Date()) {
+      await adminClient.from("profiles").update({ role: invite.role }).eq("id", data.user.id);
+      await adminClient
+        .from("invites")
+        .update({ used_by: data.user.id, used_at: new Date().toISOString() })
+        .eq("id", invite.id);
+    }
+  }
+
   return response;
 }

@@ -18,14 +18,17 @@ import { createAdminClient } from "@/lib/supabase/server";
  * Google sign-in doesn't go through our own signUp() server action (it's a
  * provider-hosted redirect straight to Supabase then back here), so an
  * invite-link token can't be consumed there like it is for email/password
- * signup. Instead GoogleSignInButton appends ?invite=<token> to the
- * redirectTo URL, and we consume/validate it here, same rules as signUp():
- * unused, not expired. handle_new_user() will have already created the
- * profile as 'parent' by the time we get here, so we just promote it.
+ * signup. GoogleSignInButton stashes it in a `pending_invite` cookie before
+ * redirecting to Google (NOT a query param on redirectTo -- Supabase
+ * appends its own ?code=... to that URL and doesn't reliably preserve an
+ * ?invite=... already there, silently dropping it). We read that cookie
+ * here instead, same validation rules as signUp(): unused, not expired.
+ * handle_new_user() will have already created the profile as 'parent' by
+ * the time we get here, so we just promote it.
  */
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const inviteToken = req.nextUrl.searchParams.get("invite");
+  const inviteToken = req.cookies.get("pending_invite")?.value;
   const site = process.env.NEXT_PUBLIC_SITE_URL!;
 
   if (!code) {
@@ -33,6 +36,7 @@ export async function GET(req: NextRequest) {
   }
 
   const response = NextResponse.redirect(`${site}/`);
+  response.cookies.delete("pending_invite");
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -18,9 +18,18 @@ export function GoogleSignInButton({ inviteToken }: { inviteToken?: string }) {
     // to the Site URL default instead of erroring, dropping the OAuth code
     // on the homepage with no session and no visible error.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
-    const redirectTo = `${siteUrl}/auth/callback${
-      inviteToken ? `?invite=${encodeURIComponent(inviteToken)}` : ""
-    }`;
+    const redirectTo = `${siteUrl}/auth/callback`;
+
+    // Stash the invite token in a short-lived cookie instead of the OAuth
+    // redirect URL's query string: Supabase appends its own ?code=... to
+    // whatever redirectTo we give it, and that merge doesn't reliably
+    // preserve an ?invite=... we'd already put there, silently dropping it
+    // (account gets created, but never promoted off the default 'parent'
+    // role). A cookie survives the whole Google -> Supabase -> our-callback
+    // round trip regardless of how that URL gets built.
+    if (inviteToken) {
+      document.cookie = `pending_invite=${encodeURIComponent(inviteToken)}; path=/; max-age=600; SameSite=Lax`;
+    }
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",

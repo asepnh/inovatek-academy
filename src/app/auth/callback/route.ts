@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /**
  * Handles the link Supabase emails out for "confirm your email" /
  * password-reset flows, and the redirect back from an OAuth provider (e.g.
  * Google). Exchanges the one-time code for a session, then sends the user
  * on to their dashboard.
+ *
+ * Builds the redirect response FIRST and writes the session cookies
+ * directly onto it (rather than using the shared createClient() helper,
+ * which writes via next/headers's cookies()) -- a well-known @supabase/ssr
+ * + Next.js Route Handler gotcha where cookies written that way aren't
+ * reliably attached to a separately-constructed NextResponse.redirect(),
+ * silently dropping the session.
  *
  * Google sign-in doesn't go through our own signUp() server action (it's a
  * provider-hosted redirect straight to Supabase then back here), so an
@@ -20,31 +28,49 @@ export async function GET(req: NextRequest) {
   const inviteToken = req.nextUrl.searchParams.get("invite");
   const site = process.env.NEXT_PUBLIC_SITE_URL!;
 
-  if (code) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (!code) {
+    return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent("Missing auth code."));
+  }
 
-    if (error) {
-      return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent(error.message));
+  const response = NextResponse.redirect(`${site}/`);
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        },
+      },
     }
+  );
 
-    if (inviteToken && data.user) {
-      const adminClient = createAdminClient();
-      const { data: invite } = await adminClient
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent(error.message));
+  }
+
+  if (inviteToken && data.user) {
+    const adminClient = createAdminClient();
+    const { data: invite } = await adminClient
+      .from("invites")
+      .select("id, role, used_at, expires_at")
+      .eq("token", inviteToken)
+      .maybeSingle();
+
+    if (invite && !invite.used_at && new Date(invite.expires_at) > new Date()) {
+      await adminClient.from("profiles").update({ role: invite.role }).eq("id", data.user.id);
+      await adminClient
         .from("invites")
-        .select("id, role, used_at, expires_at")
-        .eq("token", inviteToken)
-        .maybeSingle();
-
-      if (invite && !invite.used_at && new Date(invite.expires_at) > new Date()) {
-        await adminClient.from("profiles").update({ role: invite.role }).eq("id", data.user.id);
-        await adminClient
-          .from("invites")
-          .update({ used_by: data.user.id, used_at: new Date().toISOString() })
-          .eq("id", invite.id);
-      }
+        .update({ used_by: data.user.id, used_at: new Date().toISOString() })
+        .eq("id", invite.id);
     }
   }
 
-  return NextResponse.redirect(`${site}/`);
+  return response;
 }

@@ -15,7 +15,7 @@ export default async function AdminClassesPage({
 
   const { data: courses, error } = await supabase
     .from("classes")
-    .select("id, name, grade_level, monthly_fee_cents, is_active, profiles(full_name), enrollments(count)")
+    .select("id, name, grade_level, monthly_fee_cents, is_active, profiles!courses_mentor_id_fkey(full_name), enrollments(count)")
     .order("created_at", { ascending: false });
 
   return (

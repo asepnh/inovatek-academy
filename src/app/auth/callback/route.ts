@@ -22,7 +22,11 @@ export async function GET(req: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { data } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      return NextResponse.redirect(`${site}/login?error=` + encodeURIComponent(error.message));
+    }
 
     if (inviteToken && data.user) {
       const adminClient = createAdminClient();

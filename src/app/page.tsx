@@ -60,8 +60,12 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <footer className="mt-16 text-xs text-slate-400">
-        © 2026 Inovatek Solutions Sdn. Bhd.
+      <footer className="mt-16 space-y-2 text-xs text-slate-400">
+        <p>© 2026 Inovatek Solutions Sdn. Bhd.</p>
+        <p className="flex justify-center gap-4">
+          <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
+          <Link href="/terms" className="hover:underline">Terms of Service</Link>
+        </p>
       </footer>
     </main>
   );

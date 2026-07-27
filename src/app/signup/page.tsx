@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signUp } from "@/actions/auth";
 import { createAdminClient } from "@/lib/supabase/server";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
 
 export default async function SignupPage({
   searchParams,
@@ -60,6 +61,16 @@ export default async function SignupPage({
         </div>
         <button type="submit" className="btn w-full">Create account</button>
       </form>
+
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
+        <div className="h-px flex-1 bg-slate-200" />
+        or
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <div className="mt-4">
+        <GoogleSignInButton inviteToken={params.invite} />
+      </div>
 
       <p className="mt-4 text-center text-sm text-slate-600">
         Already have an account?{" "}

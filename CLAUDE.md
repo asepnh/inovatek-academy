@@ -10,7 +10,7 @@ A Next.js 14 (App Router) + TypeScript + Tailwind + Supabase webapp for
 Inovatek Academy: parent/student enrollment, course registration, monthly
 payments via Billplz FPX, QR codes per student, and mentor attendance
 tracking. Three roles: Admin, Mentor, Parent (see README.md for the full
-feature list and setup steps; DEPLOYMENT.md for going live on a domain).
+feature list, setup steps, and deployment checklist).
 
 ## Key architecture decisions (and why)
 
@@ -123,23 +123,21 @@ feature list and setup steps; DEPLOYMENT.md for going live on a domain).
 
 ## Current status (as of handoff)
 
-- Local dev works (`npm install && npm run dev`), `.env.local` is filled in
-  with real Supabase + Billplz **sandbox** credentials.
-- Supabase: project created, migration `0001_init.sql` run. Double-check
-  `0002_attendance_mentor_delete.sql` and `0003_rename_courses_to_classes.sql`
-  have also been run (see above).
-- GitHub: pushed to `github.com/asepnh/inovatek-academy`, `main` branch.
-- Domain: `inovatek.my` (root/apex — needs an A record, not a CNAME, when
-  pointing it at Vercel).
-- **Not yet done**: Vercel deployment, DNS pointing, and the Billplz
-  production credential swap. See `DEPLOYMENT.md` for the full remaining
-  checklist (Vercel import → env vars → domain → Supabase Auth URL update →
-  end-to-end payment test → go-live checklist).
+- Live in production at `inovatek.my`, deployed on Vercel, GitHub
+  `asepnh/inovatek-academy` main branch. Billplz is on **production**
+  credentials (real payments).
+- Supabase: all migrations through `0011_prevent_self_role_change.sql` run
+  (see `supabase/migrations/` for the full list — run any new ones in
+  numeric order after pulling).
+- Google sign-in is enabled (Supabase Authentication → Providers → Google).
+  `NEXT_PUBLIC_SITE_URL`, Supabase's Site URL / Redirect URLs, and Google
+  Cloud Console's authorized origins/redirect URI must all agree on the same
+  domain variant (apex vs `www`) — a mismatch here was the cause of a couple
+  of silent sign-in failures already; see the Google sign-in section above.
 
 ## Where to look
 
-- `README.md` — full setup from scratch (Supabase, env vars, running
-  locally, customizing).
-- `DEPLOYMENT.md` — GitHub → Vercel → domain → production checklist.
+- `README.md` — full setup from scratch, feature walkthrough, and the
+  deployment checklist.
 - `supabase/migrations/` — run these in order in the Supabase SQL editor for
   any fresh environment; there's no automated migration runner set up.

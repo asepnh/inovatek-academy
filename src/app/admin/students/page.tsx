@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/format";
+import { DeleteStudentButton } from "@/components/delete-student-button";
 
 export const dynamic = "force-dynamic";
 
@@ -41,10 +42,11 @@ export default async function AdminStudentsPage() {
                     <div className="text-xs text-slate-400">{parent?.phone}</div>
                   </td>
                   <td className="py-2">{formatDate(s.created_at)}</td>
-                  <td className="py-2 text-right">
+                  <td className="py-2 text-right space-x-3">
                     <Link href={`/admin/students/${s.id}`} className="text-brand-600 hover:underline">
                       View
                     </Link>
+                    <DeleteStudentButton studentId={s.id} studentName={s.full_name} />
                   </td>
                 </tr>
               );

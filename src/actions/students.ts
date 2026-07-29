@@ -103,3 +103,34 @@ export async function setFeeWaived(studentId: string, waived: boolean) {
   await supabase.from("students").update({ fee_waived: waived }).eq("id", studentId);
   revalidatePath(`/admin/students/${studentId}`);
 }
+
+export async function deleteStudent(studentId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") redirect("/");
+
+  if (!studentId) return { error: "Missing student id." };
+
+  const { data: existing } = await supabase
+    .from("students")
+    .select("photo_path")
+    .eq("id", studentId)
+    .single();
+
+  // FK constraints on enrollments/payments/attendance cascade-delete along
+  // with the student (on delete cascade, see supabase/migrations/0001_init.sql).
+  const { error } = await supabase.from("students").delete().eq("id", studentId);
+  if (error) return { error: error.message };
+
+  if (existing?.photo_path) {
+    await deleteStudentPhoto(supabase, existing.photo_path);
+  }
+
+  revalidatePath("/admin/students");
+  return {};
+}

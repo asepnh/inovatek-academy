@@ -1,9 +1,39 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createBill } from "@/lib/billplz";
 import { monthName } from "@/lib/format";
+
+async function requireAdmin() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
+  if (profile?.role !== "admin") redirect("/");
+  return supabase;
+}
+
+/**
+ * Lets an admin mark a payment as paid manually, for fees collected offline
+ * (cash, bank transfer outside the app, etc). Guarded to only affect a
+ * still-unpaid row, so it's safe even if clicked twice.
+ */
+export async function markPaymentPaid(paymentId: string) {
+  const supabase = await requireAdmin();
+  const { error } = await supabase
+    .from("payments")
+    .update({ status: "paid", paid_at: new Date().toISOString() })
+    .eq("id", paymentId)
+    .neq("status", "paid");
+
+  revalidatePath("/admin/payments");
+  if (error) return { error: error.message };
+  return {};
+}
 
 /**
  * Parent clicks "Pay Now" on a pending/overdue payment. Creates (or reuses)

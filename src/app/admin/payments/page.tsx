@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { PaymentStatusBadge } from "@/components/payment-status-badge";
+import { MarkPaidButton } from "@/components/mark-paid-button";
 import { formatDate, formatMYR, monthName } from "@/lib/format";
 import type { PaymentStatus } from "@/lib/types";
 
@@ -49,6 +50,7 @@ export default async function AdminPaymentsPage({
               <th className="pb-2 font-medium">Amount</th>
               <th className="pb-2 font-medium">Due</th>
               <th className="pb-2 font-medium">Status</th>
+              <th className="pb-2 font-medium"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -63,12 +65,17 @@ export default async function AdminPaymentsPage({
                   <td className="py-2">{formatMYR(p.amount_cents)}</td>
                   <td className="py-2">{formatDate(p.due_date)}</td>
                   <td className="py-2"><PaymentStatusBadge status={p.status} /></td>
+                  <td className="py-2 text-right">
+                    {p.status !== "paid" && p.status !== "cancelled" && (
+                      <MarkPaidButton paymentId={p.id} studentName={student?.full_name ?? "this student"} />
+                    )}
+                  </td>
                 </tr>
               );
             })}
             {(!payments || payments.length === 0) && (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-slate-500">No payments found.</td>
+                <td colSpan={7} className="py-6 text-center text-slate-500">No payments found.</td>
               </tr>
             )}
           </tbody>

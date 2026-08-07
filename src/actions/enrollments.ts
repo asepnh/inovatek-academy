@@ -48,3 +48,30 @@ export async function setEnrollmentStatus(enrollmentId: string, status: "active"
   await supabase.from("enrollments").update({ status }).eq("id", enrollmentId);
   revalidatePath("/admin/enrollments");
 }
+
+/**
+ * Admin bulk-enrolls a set of students into one class, e.g. for students a
+ * parent registered but never got around to registering for a class
+ * themselves. Skips (rather than errors on) any student already enrolled in
+ * that class -- safe to select an already-enrolled student by mistake, or
+ * to run twice. Goes straight to 'active', not 'pending', since an admin
+ * doing this deliberately doesn't need to also approve their own action.
+ */
+export async function bulkEnrollStudents(studentIds: string[], classId: string) {
+  const supabase = await requireStaff();
+  if (studentIds.length === 0 || !classId) return { error: "Choose at least one student and a class." };
+
+  const { data, error } = await supabase
+    .from("enrollments")
+    .upsert(
+      studentIds.map((studentId) => ({ student_id: studentId, class_id: classId, status: "active" })),
+      { onConflict: "student_id,class_id", ignoreDuplicates: true }
+    )
+    .select("id");
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/enrollments");
+  return { enrolled: data?.length ?? 0 };
+}
